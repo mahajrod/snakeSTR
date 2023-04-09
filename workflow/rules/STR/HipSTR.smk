@@ -10,7 +10,8 @@ rule hipSTR:
         vcf=out_dir_path / "str/hipSTR.vcf.gz",
         viz=out_dir_path / "str/hipSTR.viz.gz",
     params:
-        bams=lambda wildcards: ",".join(sample_id_list),
+        bams=lambda wildcards: ",".join(expand(out_dir_path / "realigned_bam/{sample_id}/{sample_id}.realigned.bam",
+                                               sample_id=sample_id_list)),
         min_reads=parameters["tool_options"]["hipSTR"][config["parameter_set"]]["min_reads"],
     log:
         std=output_dict["log"] / "hipSTR.log",
