@@ -40,7 +40,7 @@
             "extract_alignments": 1
             "add_flanks": 1
             "extract_properly_mapped_reads": 4
-            "bwa_map": 10
+            "bwa_map": 4
             "samtools_sort": 2
             "samtools_fixmate": 1
             "realign_bam": 4
