@@ -16,6 +16,7 @@ rule bwa_map: #
         fixmate=output_dict["log"]  / "bwa_map.{sample_id}.fixmate.log",
         sort=output_dict["log"]  / "bwa_map.{sample_id}.sort.log",
         index=output_dict["log"] / "bwa_map.{sample_id}.index.log",
+        mkdup=output_dict["log"] / "bwa_map.{sample_id}.mkdup.log",
         cluster_log=output_dict["cluster_log"] / "bwa_map.{sample_id}.cluster.log",
         cluster_err=output_dict["cluster_error"] / "bwa_map.{sample_id}.cluster.err"
     benchmark:
@@ -23,7 +24,7 @@ rule bwa_map: #
     conda:
         config["conda"]["common"]["name"] if config["use_existing_envs"] else ("../../../%s" % config["conda"]["common"]["yaml"])
     resources:
-        cpus=parameters["threads"]["bwa_map"] ,
+        cpus=parameters["threads"]["bwa_map"] + parameters["threads"]["samtools_sort"] + parameters["threads"]["samtools_fixmate"] + parameters["threads"]["samtools_fixmate"],
         time=parameters["time"]["bwa_map"],
         mem=parameters["memory_mb"]["bwa_map"] + parameters["memory_mb"]["samtools_per_thread"] * parameters["threads"]["samtools_sort"]
     threads: parameters["threads"]["bwa_map"] + parameters["threads"]["samtools_sort"] + parameters["threads"]["samtools_fixmate"]
@@ -32,8 +33,8 @@ rule bwa_map: #
         " bwa mem -t {threads} -R  \'@RG\\tID:{wildcards.sample_id}\\tPU:x\\tSM:{wildcards.sample_id}\\tPL:Illumina\\tLB:{wildcards.sample_id}\' "
         " {input.reference} {input.forward_read} {input.reverse_read} 2>{log.map} | "
         " samtools fixmate -@ {params.samtools_fixmate_threads} -m - -  2>{log.fixmate} | "
-        " samtools sort -@ {params.samtools_sort_threads} -m {params.samtools_sort_memory}m  |"
-        " samtools markdup -@ {params.samtools_markdup_threads} - {output.bam} 1>{log.sort} 2>&1;"
+        " samtools sort -@ {params.samtools_sort_threads} -m {params.samtools_sort_memory}m  2>{log.sort}|"
+        " samtools markdup -@ {params.samtools_markdup_threads} - {output.bam} 1>{log.mkdup} 2>&1;"
         " samtools index {output.bam} >{log.index} 2>&1"
 
 rule realign_bam: #
