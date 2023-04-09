@@ -4,8 +4,8 @@ rule extract_properly_mapped_reads:
         bam=rules.extract_alignments.output.bam,
         bed=str_loci_bed_path
     output:
-        forward=temp(out_dir_path / "extracted_fastq/{sample_id}/{sample_id}.extracted_1.fastq"),
-        reverse=temp(out_dir_path / "extracted_fastq/{sample_id}/{sample_id}.extracted_2.fastq")
+        forward_read=temp(out_dir_path / "extracted_fastq/{sample_id}/{sample_id}.extracted_1.fastq"),
+        reverse_read=temp(out_dir_path / "extracted_fastq/{sample_id}/{sample_id}.extracted_2.fastq")
     log:
         std=output_dict["log"]  / "extract_properly_mapped_reads.{sample_id}.log",
         cluster_log=output_dict["cluster_log"] / "extract_properly_mapped_reads.{sample_id}.cluster.log",
@@ -21,4 +21,4 @@ rule extract_properly_mapped_reads:
     threads: parameters["threads"]["extract_properly_mapped_reads"]
 
     shell:
-        " bazam -bam {input.bam} -L {input.bed} -r1 {output.forward} -r2 {output.reverse} > {log.std} 2>&1"
+        " bazam -bam {input.bam} -L {input.bed} -r1 {output.forward_read} -r2 {output.reverse_read} > {log.std} 2>&1"

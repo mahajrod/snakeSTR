@@ -2,8 +2,8 @@
 rule bwa_map: #
     input:
         reference=reference_path,
-        forward=rules.extract_properly_mapped_reads.output.forward,
-        reverse=rules.extract_properly_mapped_reads.output.reverse,
+        forward_read=rules.extract_properly_mapped_reads.output.forward_read,
+        reverse_read=rules.extract_properly_mapped_reads.output.reverse_read,
     output:
         bam=out_dir_path  / "intermediate_bam/{sample_id}/{sample_id}.intermediate.bam"
     params:
@@ -29,7 +29,7 @@ rule bwa_map: #
 
     shell:
         " bwa mem -t {threads} -R  \'@RG\\tID:{wildcards.sample_id}\\tPU:x\\tSM:{wildcards.sample_id}\\tPL:Illumina\\tLB:{wildcards.sample_id}\' "
-        " {input.reference} {input.forward} {input.reverse} 2>{log.map} | "
+        " {input.reference} {input.forward_read} {input.reverse_read} 2>{log.map} | "
         " samtools fixmate -@ {params.samtools_fixmate_threads} -m - -  2> {log.fixmate} | "
         " samtools sort -@ {params.samtools_sort_threads} -m {params.samtools_sort_memory}m -o {output.bam} 1>{log.sort} 2>&1;"
         " samtools index {output.bam} >{log.index} 2>&1"
