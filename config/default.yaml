@@ -1,0 +1,195 @@
+#---- Conda config files and environments ----
+"conda":
+    "common":
+        "yaml": "workflow/envs/conda.common.yaml"
+        "name": "base"
+    "salsa2":
+        "yaml": "workflow/envs/conda.salsa2.yaml"
+        "name": "salsa2"
+    "busco":
+        "yaml": "workflow/envs/conda.busco.yaml"
+        "name": "busco"
+
+#----
+#---- Directory structure config ----
+
+#---- Input ----
+"input_dir": "input/"
+
+#----
+
+#----
+#---- Output directory and subdirectories ----
+"out_dir": "results"
+#--------- Subdirectories --------
+"out_subdir_list":
+  - "fastq"
+  - "bam"
+  - "realigned_bam"
+  - "str"
+  - "log"
+  - "benchmark"
+
+#--------
+
+#---- Tool parameters ----
+"parameters":
+    "default":
+        "threads":
+            "samtools_view": 1
+            "create_links_for_draft": 1
+            "fastqc": 1
+            "multiqc": 1
+            "cutadapt": 5
+            "jellyfish": 30
+            "meryl": 30
+            "genomescope": 1
+            "parse_genomescope_output": 1
+            "hifiasm": 30
+            "gfa2fasta": 1
+            "busco5": 30
+            "quast": 4
+            "merqury": 20
+            "minimap2_index": 10
+            "minimap2": 30
+            "get_purge_dups_read_stat": 5 # ToDO: adjust, maybe even one is enough
+            "purge_dups": 5 # TODO: adjust, maybe even one is enough
+            "merge_pri_hapdups_with_alt": 1
+            "create_links": 1
+            "bwa_index": 1
+            "bwa_map": 30
+            "two_read_bam_combiner": 1
+            "samtools_sort": 4
+            "ref_faidx": 1
+            "ref_dict": 1
+            "rmdup": 4
+            "bam2bed": 4
+            "pretextmap": 3
+            "pretextsnapshot": 4
+            "salsa2": 10 #TODO: adjust
+        "memory_mb":
+            "create_fastq_links": 100
+            "create_links_for_draft": 100
+            "fastqc": 5000
+            "multiqc": 1000
+            "cutadapt": 10000
+            "jellyfish": 200000
+            "genomescope": 300
+            "parse_genomescope_output": 100
+            "hifiasm": 50000
+            "gfa2fasta": 10000
+            "busco5": 20000
+            "quast": 10000
+            "merqury": 20000 # TODO: adjust
+            "minimap2_index": 10000 # TODO: adjust
+            "minimap2": 10000 # TODO: adjust
+            "get_purge_dups_read_stat": 10000 # ToDO: adjust, maybe even 1000 is enough
+            "purge_dups": 10000 # ToDO: adjust, maybe less is OK , or maybe it is dependent on the genome size
+            "merge_pri_hapdups_with_alt": 1000
+            "create_links": 100
+            "bwa_index": 10000
+            "bwa_map": 30000
+            "two_read_bam_combiner": 25000
+            "samtools_sort": 30000
+            "ref_faidx": 3000
+            "ref_dict": 3000
+            "rmdup": 15000
+            "bam2bed": 40000 # TODO: adjust depending on the genome size
+            "pretextmap": 10000
+            "pretextsnapshot": 5000
+            "salsa2": 50000 # TODO: adjust
+
+            mosdepth: 4000 #The amount of memory is approximately equal to 32-bits * longest chrom length, so for the 249MB chromosome 1, it will require 1GB of memory.
+            basecall: 20000
+
+        "time": #TODO: adjust
+            "create_fastq_links": "00:05:00"
+            "create_links_for_draft": "00:05:00"
+            "fastqc": "04:00:00"
+            "multiqc": "00:10:00"
+            "cutadapt": "04:00:00"
+            "jellyfish": "08:00:00"
+            "meryl": "08:00:00"
+            "genomescope": "01:00:00"
+            "parse_genomescope_output": "00:10:00"
+            "hifiasm": "08:00:00"
+            "gfa2fasta": "08:00:00"
+            "busco5": "24:00:00"
+            "quast": "02:00:00"
+            "merqury": "12:00:00"
+            "minimap2_index": "12:00:00"
+            "minimap2": "12:00:00"
+            "get_purge_dups_read_stat": "12:00:00" # TODO: adjust
+            "purge_dups": "10:00:00" # TODO adjust depending on genome size
+            "merge_pri_hapdups_with_alt": "01:00:00"
+            "create_links": "00:01:00"
+            "bwa_index": "5:00:00"
+            "bwa_map": "12:00:00"
+            "two_read_bam_combiner": "5:00:00"
+            "samtools_sort": "8:00:00"
+            "ref_faidx": "02:00:00"
+            "ref_dict": "02:00:00"
+            "rmdup": "24:00:00"
+            "bam2bed": "5:00:00"
+            "pretextmap": "8:00:00"
+            "pretextsnapshot": "04:00:00"
+            "salsa2": "12:00:00"
+
+            mosdepth: "02:00:00"
+            basecall: "10:00:00"
+
+            bowtie2_index: "12:00:00"
+
+            get_basecall_stats: "00:10:00"
+
+        "tool_options":
+            "cutadapt":
+                "hifi":
+                    "error_rate": 0.1 # --error-rate / -e
+                    "min_adapter_length": 35 # --overlap / -O
+                    "adapter_match_times": 3 # -n / --times
+                    "check_read_rc": True # --rc
+                    "discard_trimmed": True # --discard-trimmed / --discard
+                    "anywhere_adapter_list": # -b, multiple times
+                        - "ATCTCTCTCAACAACAACAACGGAGGAGGAGGAAAAGAGAGAGAT"
+                        - "ATCTCTCTCTTTTCCTCCTCCTCCGTTGTTGTTGTTGAGAGAGAT"
+
+
+"stage_coretools":     #TODO: add bionano
+    "filtering":
+        "hifi": "cutadapt"
+    "contig":
+        "hifi":
+            - "hifiasm" # Allowed: "hifiasm,""hicanu", "ipa", "flye", "nextdenovo"
+        #"clr":
+        #"nanopore":
+    "purge_dups":
+        - "purge_dups"
+    "hic_scaffolding":
+        - "yahs" # Allowed: "yahs", "salsa2", "3d-dna"
+
+"coretool_option_sets":
+    "hifiasm":
+         - "l0primary"
+         - "l1primary"
+         - "l2primary"
+         - "l3primary"
+         - "l0"
+         - "l1"
+         - "l2"
+         - "l3"
+
+"ploidy": 2
+"genome_prefix": "genome"
+"busco_lineage": "mammalia_odb10" #
+
+#---- Pipeline modes ----
+
+"mode": "assembly"                # Allowed: "preprocessing", "qc", "assembly"
+"preprocessing_mode": "default"   # Allowed: "default"
+"qc_mode": "default"              # Allowed: "default"
+"assembly_mode": "full"           # Allowed: "default", "full", "purge_dups", "contig"; custom modes could be set in config file
+
+
+"parameter_set": "default" # Choice of genome-size based set of parameters
+"use_existing_envs": True # works only if --use-conda flag was set in snakemake command
