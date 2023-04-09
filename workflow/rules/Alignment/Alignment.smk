@@ -31,8 +31,8 @@ rule bwa_map: #
     threads: parameters["threads"]["bwa_map"] + parameters["threads"]["samtools_sort"] + parameters["threads"]["samtools_fixmate"]
 
     shell:
-        " bwa mem -t {params.bwa_threads} -R  \'@RG\\tID:{wildcards.sample_id}\\tPU:x\\tSM:{wildcards.sample_id}\\tPL:Illumina\\tLB:{wildcards.sample_id}\' "
-        " {input.reference} {input.forward_read} {input.reverse_read} 2>{log.map} | "
+        " bwa mem -t {params.bwa_threads} {input.reference} {input.forward_read} {input.reverse_read} "
+        " -R \'@RG\\tID:{wildcards.sample_id}\\tPU:x\\tSM:{wildcards.sample_id}\\tPL:Illumina\\tLB:{wildcards.sample_id}\'  2>{log.map} | "
         " samtools fixmate -@ {params.samtools_fixmate_threads} -m - -  2>{log.fixmate} | "
         " samtools sort -@ {params.samtools_sort_threads} -m {params.samtools_sort_memory}m  2>{log.sort}|"
         " samtools markdup -@ {params.samtools_markdup_threads} - {output.bam} 1>{log.mkdup} 2>&1;"
