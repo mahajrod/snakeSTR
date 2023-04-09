@@ -112,9 +112,9 @@ parameters = config["parameters"][config["parameter_set"]] # short alias for use
 
 
 #---- Save configuration and input files ----
-final_config_yaml = output_dict["config"] / "config.final.yaml"
+final_config_yaml = out_dir_path / "config/config.final.yaml"
 
-os.makedirs(output_dict["config"], exist_ok=True)
+os.makedirs(out_dir_path / "config/", exist_ok=True)
 
 with open(final_config_yaml, 'w') as final_config_fd, open(final_input_yaml, 'w') as final_input_fd:
     yaml.dump(convert_posixpath2str_in_dict(config), final_config_fd, default_flow_style=False, sort_keys=False)
