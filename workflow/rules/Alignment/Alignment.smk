@@ -53,7 +53,7 @@ rule realign_bam: #
         cpus=parameters["threads"]["realign_bam"] ,
         time=parameters["time"]["realign_bam"],
         mem=parameters["memory_mb"]["realign_bam"]
-    threads: parameters["threads"]["realign_bamp"]
+    threads: parameters["threads"]["realign_bam"]
     shell:
         " gatk -T IndelRealigner -targetIntervals {input.bed} -I {input.bam} -o {output.bam} "
         " -R {input.reference} > {log.std} 2>&1"
