@@ -25,7 +25,7 @@ rule bwa_map: #
         cpus=parameters["threads"]["bwa_map"] ,
         time=parameters["time"]["bwa_map"],
         mem=parameters["memory_mb"]["bwa_map"] + parameters["memory_mb"]["samtools_per_thread"] * parameters["threads"]["samtools_sort"]
-    threads: parameters["threads"]["bwa_map"] + parameters["threads"]["samtools_sort"] + parameters["threads"]["fixmate"]
+    threads: parameters["threads"]["bwa_map"] + parameters["threads"]["samtools_sort"] + parameters["threads"]["samtools_fixmate"]
 
     shell:
         " bwa mem -t {threads} -R  \'@RG\\tID:{wildcards.sample_id}\\tPU:x\\tSM:{wildcards.sample_id}\\tPL:Illumina\\tLB:{wildcards.sample_id}\' "

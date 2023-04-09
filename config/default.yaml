@@ -44,12 +44,6 @@
             "samtools_sort": 2
             "samtools_fixmate": 1
             "realign_bam": 4
-            "fastqc": 1
-            "multiqc": 1
-            "cutadapt": 5
-            "jellyfish": 30
-            "meryl": 30
-            "genomescope": 1
             "hipSTR": 1
 
         "memory_mb":
