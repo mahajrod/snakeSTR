@@ -10,6 +10,7 @@ rule bwa_map: #
         samtools_sort_threads=parameters["threads"]["samtools_sort"],
         samtools_fixmate_threads=parameters["threads"]["samtools_fixmate"],
         samtools_markdup_threads=parameters["threads"]["samtools_markdup"],
+        bwa_threads=parameters["threads"]["bwa_map"],
         samtools_sort_memory=parameters["memory_mb"]["samtools_per_thread"]
     log:
         map=output_dict["log"]  / "bwa_map.{sample_id}.map.log",
@@ -30,7 +31,7 @@ rule bwa_map: #
     threads: parameters["threads"]["bwa_map"] + parameters["threads"]["samtools_sort"] + parameters["threads"]["samtools_fixmate"]
 
     shell:
-        " bwa mem -t {threads} -R  \'@RG\\tID:{wildcards.sample_id}\\tPU:x\\tSM:{wildcards.sample_id}\\tPL:Illumina\\tLB:{wildcards.sample_id}\' "
+        " bwa mem -t {params.bwa_threads} -R  \'@RG\\tID:{wildcards.sample_id}\\tPU:x\\tSM:{wildcards.sample_id}\\tPL:Illumina\\tLB:{wildcards.sample_id}\' "
         " {input.reference} {input.forward_read} {input.reverse_read} 2>{log.map} | "
         " samtools fixmate -@ {params.samtools_fixmate_threads} -m - -  2>{log.fixmate} | "
         " samtools sort -@ {params.samtools_sort_threads} -m {params.samtools_sort_memory}m  2>{log.sort}|"
