@@ -45,6 +45,7 @@
             "samtools_fixmate": 1
             "realign_bam": 4
             "hipSTR": 1
+            "samtools_markdup": 1
 
         "memory_mb":
             "extract_alignments": 1000
