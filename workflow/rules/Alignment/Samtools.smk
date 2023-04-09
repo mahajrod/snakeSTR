@@ -1,7 +1,7 @@
 
 rule extract_alignments: #
     input:
-        bam=input_dir_path / "alignment/{sample_id}/{sample_id}%s.bam" % config["bam_suffix"],
+        bam=input_dir_path / ("alignment/{sample_id}/{sample_id}%s.bam" % config["bam_suffix"]),
         bed=rules.add_flanks.output
     output:
         bam=out_dir_path  / "extracted_bam/{sample_id}/{sample_id}.extracted.bam"
