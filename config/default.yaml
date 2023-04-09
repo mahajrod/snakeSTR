@@ -51,7 +51,7 @@
             "extract_alignments": 1000
             "add_flanks": 100
             "extract_properly_mapped_reads": 3000
-            "bwa_map": 3000
+            "bwa_map": 10000
             "samtools_per_thread": 500
             "realign_bam": 3000
             "hipSTR": 3000
