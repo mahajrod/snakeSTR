@@ -10,6 +10,7 @@ rule add_flanks:
         flank_len=config["flank_len"]
     log:
         std=output_dict["log"] / "add_flanks.log",
+        cut=output_dict["log"] / "add_flanks.cut.log",
         cluster_log=output_dict["cluster_log"] / "add_flanks.cluster.log",
         cluster_err=output_dict["cluster_error"] / "add_flanks.cluster.err",
     benchmark:
@@ -23,4 +24,5 @@ rule add_flanks:
     threads:
         parameters["threads"]["add_flanks"]
     shell:
-         " add_flanks_to_bed.py -i {input} -l {params.flank_len} -r {params.flank_len} | cut -f 1-3 > {output} 2>{log.std}"
+         " add_flanks_to_bed.py -i {input} -l {params.flank_len} -r {params.flank_len} 2>{log.std} | "
+         " cut -f 1-3 > {output} 2>{log.cut} "
