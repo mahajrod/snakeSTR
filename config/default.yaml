@@ -27,6 +27,7 @@
   - "str"
   - "log"
   - "benchmark"
+  - "config"
 
 #--------
 

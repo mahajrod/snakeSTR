@@ -68,6 +68,8 @@ input_dict = {}
 out_dir_path = Path(config["out_dir"])
 output_dict = {}
 
+for subdir in config["out_subdir_list"]:
+    output_dict[subdir] = out_dir_path / subdir
 
 #--------
 
@@ -138,7 +140,7 @@ include: "workflow/rules/Preprocessing/Files.smk"
 include: "workflow/rules/Alignment/Samtools.smk"
 include: "workflow/rules/Alignment/Bazam.smk"
 include: "workflow/rules/Alignment/Alignment.smk"
-
+include: "workflow/rules/STR/HipSTR.smk"
 
 
 #----
