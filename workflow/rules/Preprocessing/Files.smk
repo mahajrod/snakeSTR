@@ -1,49 +1,26 @@
-localrules: create_fastq_links, create_links_for_draft
+localrules: add_flanks
 
-rule create_fastq_links:
+rule add_flanks:
     priority: 1000
     input:
-        input_dir_path.resolve() / ("{datatype}/fastq/{fileprefix}%s" %  config["fastq_extension"])
+        str_loci_bed_path
     output:
-        #directory(output_dict["data"] / "/fastq/{datatype}/raw"),
-        output_dict["data"] / ("fastq/{datatype}/raw/{fileprefix}%s" % config["fastq_extension"])
+        out_dir_path / "str/str_loci_with_flanks.bed"
+    params:
+        flank_len=config["flank_len"]
     log:
-        std=output_dict["log"] / "create_fastq_links.{datatype}.{fileprefix}.log",
-        cluster_log=output_dict["cluster_log"] / "create_fastq_links.{datatype}.{fileprefix}.cluster.log",
-        cluster_err=output_dict["cluster_error"] / "create_fastq_links.{datatype}.{fileprefix}.cluster.err",
+        std=output_dict["log"] / "add_flanks.log",
+        cluster_log=output_dict["cluster_log"] / "add_flanks.cluster.log",
+        cluster_err=output_dict["cluster_error"] / "add_flanks.cluster.err",
     benchmark:
-        output_dict["benchmark"] / "create_fastq_links.{datatype}.{fileprefix}.benchmark.txt",
+        output_dict["benchmark"] / "add_flanks.benchmark.txt"
     conda:
         config["conda"]["common"]["name"] if config["use_existing_envs"] else ("../../../%s" % config["conda"]["common"]["yaml"])
     resources:
-        cpus=parameters["threads"]["create_fastq_links"],
-        time=parameters["time"]["create_fastq_links"],
-        mem=parameters["memory_mb"]["create_fastq_links"],
+        cpus=parameters["threads"]["add_flanks"],
+        time=parameters["time"]["add_flanks"],
+        mem=parameters["memory_mb"]["add_flanks"],
     threads:
-        parameters["threads"]["create_fastq_links"]
+        parameters["threads"]["add_flanks"]
     shell:
-         " ln -s {input} {output} 2>{log.std}"
-
-rule create_links_for_draft:
-    priority: 1000
-    input:
-        input_dir_path.resolve() / "draft/fasta/{fileprefix}.{haplotype}.fasta"
-    output:
-        #directory(output_dict["data"] / "/fastq/{datatype}/raw"),
-        output_dict["draft"] / "/raw/{fileprefix}.{haplotype}.fasta"
-    log:
-        std=output_dict["log"] / "create_links_for_draft.{fileprefix}.{haplotype}.log",
-        cluster_log=output_dict["cluster_log"] / "create_links_for_draft.{fileprefix}.{haplotype}.cluster.log",
-        cluster_err=output_dict["cluster_error"] / "create_links_for_draft.{fileprefix}.{haplotype}.cluster.err",
-    benchmark:
-        output_dict["benchmark"] / "create_fastq_links.{fileprefix}.{haplotype}.benchmark.txt",
-    conda:
-        config["conda"]["common"]["name"] if config["use_existing_envs"] else ("../../../%s" % config["conda"]["common"]["yaml"])
-    resources:
-        cpus=parameters["threads"]["create_links_for_draft"],
-        time=parameters["time"]["create_links_for_draft"],
-        mem=parameters["memory_mb"]["create_links_for_draft"],
-    threads:
-        parameters["threads"]["create_links_for_draft"]
-    shell:
-         " ln -s {input} {output} 2>{log.std}"
+         " add_flanks_to_bed.py -i {input} -l {params.flank_len} -r {params.flank_len} | cut -f 1-3 > {output} 2>{log.std}"

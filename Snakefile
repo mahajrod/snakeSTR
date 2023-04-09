@@ -68,9 +68,6 @@ input_dict = {}
 out_dir_path = Path(config["out_dir"])
 output_dict = {}
 
-for first_level_sub_dir in config["first_level_subdir_list"]:
-    output_dict[first_level_sub_dir] = out_dir_path / config["{0}_subdir".format(first_level_sub_dir)]
-
 
 #--------
 
@@ -78,26 +75,37 @@ for first_level_sub_dir in config["first_level_subdir_list"]:
 
 #---- Checking input files ----
 #logging.info("Checking input files...")
+sample_id_list = []
+for path in (input_dir_path / "alignment" ).glob("*"):
+    if path.is_dir():
+        sample_id_list.append(path.name)
 
-input_filedict = {}
-input_file_prefix_dict = {}
-input_forward_suffix_dict = {}
-input_reverse_suffix_dict = {}
-input_pairprefix_dict = {}
+if not sample_id_list:
+    raise ValueError("ERROR!!! No samples were detected...")
 
-for d_type in fastq_based_data_type_set:
-    input_filedict[d_type] = find_fastqs(input_dict[d_type]["fastq_dir"], fastq_extension=config["fastq_extension"])
-    input_file_prefix_dict[d_type] = list(map(lambda s: str(s.name)[:-len(config["fastq_extension"])],
-                                                input_filedict[d_type]))
-# check filenames of paired data
-for d_type in set(config["paired_fastq_based_data"]) & fastq_based_data_type_set:
-   if (len(input_filedict[d_type]) % 2) != 0:
-        raise ValueError("ERROR!!! {0} fastq files seems to be unpaired or misrecognized".format(d_type))
-   for forward, reverse in zip(input_filedict[d_type][::2], input_filedict[d_type][1::2]):
-        #print(forward, reverse)
-        if p_distance(str(forward), str(reverse), len(str(forward))) > 1:
-            raise ValueError("ERROR!!! Forward and reverse read files differs by more than one symbol:\n\t{0}\n\t{1}".format(str(forward),
-                                                                                                                             str(reverse)))
+absent_bam_sample_list = []
+
+for sample in sample_id_list:
+    if not (input_dir_path / "alignment" / sample / (sample + config["bam_suffix"] + ".bam")).exists():
+        absent_bam_sample_list.append(sample)
+
+if absent_bam_sample_list:
+    raise ValueError("ERROR! Bam files we not found for following samples: {0}".format(",".join(absent_bam_sample_list)))
+
+# check presence of bed files
+str_loci_bed_path = Path(config["str_loci_bed"])
+if not str_loci_bed_path.exists(): # check if file is located in the input_folder
+    str_loci_bed_path = input_dir_path / "bed"/ config["str_loci_bed"]
+
+str_repeat_bed_path = Path(config["str_repeat_bed"])
+if not str_repeat_bed_path.exists():  # check if file is located in the input_folder
+    str_repeat_bed_path = input_dir_path / "bed" / config["str_repeat_bed"]
+
+reference_path = Path(config["reference"])
+if not reference_path.exists():  # check if file is located in the input_folder
+    reference_path = input_dir_path / "reference" / config["reference"]
+
+
 #---- Initialize tool parameters ----
 parameters = config["parameters"][config["parameter_set"]] # short alias for used set of parameters
 
@@ -125,19 +133,16 @@ for mega_stage in mega_stage_list:
 
 #---- Save configuration and input files ----
 final_config_yaml = output_dict["config"] / "config.final.yaml"
-final_input_yaml = output_dict["config"] / "input.final.yaml"
 
 os.makedirs(output_dict["config"], exist_ok=True)
 
 with open(final_config_yaml, 'w') as final_config_fd, open(final_input_yaml, 'w') as final_input_fd:
     yaml.dump(convert_posixpath2str_in_dict(config), final_config_fd, default_flow_style=False, sort_keys=False)
-    yaml.dump(convert_posixpath2str_in_dict(input_dict), final_input_fd, default_flow_style=False, sort_keys=False)
-
 
 #-------------------------------------------
 localrules: all
 
-results_list = []
+results_list = [out_dir_path / "str/hipSTR.vcf.gz"]
 
 #---- Create output filelist ----
 
@@ -146,11 +151,13 @@ results_list = []
 rule all:
     input:
         results_list
-        #results_dict[config["mode"]]
 #----
 
 #---- Include section ----
 include: "workflow/rules/Preprocessing/Files.smk"
+include: "workflow/rules/Alignment/Samtools.smk"
+include: "workflow/rules/Alignment/Bazam.smk"
+include: "workflow/rules/Alignment/Alignment.smk"
 
 
 

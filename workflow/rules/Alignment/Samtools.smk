@@ -1,30 +1,25 @@
 
-rule pretextmap: #
+rule extract_alignments: #
     input:
-        bam=out_dir_path  / ("{assembly_stage}/{assembler}/{haplotype}/alignment/%s.{assembly_stage}.{assembler}.{haplotype}.bwa.filtered.rmdup.bam"  % config["genome_name"]),
+        bam=input_dir_path / "alignment/{sample_id}/{sample_id}%s.bam" % config["bam_suffix"],
+        bed=rules.add_flanks.output
     output:
-        map=out_dir_path  / ("{assembly_stage}/{assembler}/{haplotype}/alignment/%s.{assembly_stage}.{assembler}.{haplotype}.bwa.filtered.rmdup.map.pretext"  % config["genome_name"]),
-    params:
-        min_mapq=parameters["tool_options"]["pretextmap"]["mapq"],
-        sortby=parameters["tool_options"]["pretextmap"]["sortby"],
-        sortorder=parameters["tool_options"]["pretextmap"]["sortorder"]
+        bam=out_dir_path  / "extracted_bam/{sample_id}/{sample_id}.extracted.bam"
     log:
-        view=output_dict["log"]  / "pretextmap.{assembler}.{assembly_stage}.{haplotype}.view.log",
-        map=output_dict["log"]  / "pretextmap.{assembler}.{assembly_stage}.{haplotype}.map.log",
-        cluster_log=output_dict["cluster_log"] / "pretextmap.{assembler}.{assembly_stage}.{haplotype}.cluster.log",
-        cluster_err=output_dict["cluster_error"] / "pretextmap.{assembler}.{assembly_stage}.{haplotype}.cluster.err"
+        extract=output_dict["log"]  / "extract_alignments.{sample_id}.extract.log",
+        index=output_dict["log"] / "extract_alignments.{sample_id}.index.log",
+        cluster_log=output_dict["cluster_log"] / "extract_alignments.{sample_id}.cluster.log",
+        cluster_err=output_dict["cluster_error"] / "extract_alignments.{sample_id}.cluster.err"
     benchmark:
-        output_dict["benchmark"]  / "pretextmap.{assembler}.{assembly_stage}.{haplotype}.benchmark.txt"
+        output_dict["benchmark"]  / "extract_alignments.{sample_id}.benchmark.txt"
     conda:
         config["conda"]["common"]["name"] if config["use_existing_envs"] else ("../../../%s" % config["conda"]["common"]["yaml"])
     resources:
-        cpus=parameters["threads"]["pretextmap"] ,
-        time=parameters["time"]["pretextmap"],
-        mem=parameters["memory_mb"]["pretextmap"]
-    threads: parameters["threads"]["pretextmap"]
+        cpus=parameters["threads"]["extract_alignments"] ,
+        time=parameters["time"]["extract_alignments"],
+        mem=parameters["memory_mb"]["extract_alignments"]
+    threads: parameters["threads"]["extract_alignments"]
 
     shell:
-        " samtools view -h {input.bam} 2>{log.view} | "
-        " PretextMap -o {output.map} --sortby {params.sortby} --sortorder {params.sortorder} "
-        " --mapq {params.min_mapq} > {log.map} 2>&1"
-
+        " samtools view -bhM -L {input.bed} -o {output.bam} {input.bam} > {log.extract} 2>&1;"
+        " samtools index {output.bam} > {log.index} 2>&1"

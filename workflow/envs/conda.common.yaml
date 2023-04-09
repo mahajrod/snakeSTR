@@ -1,41 +1,8 @@
 #---- Bioconda config ----
-#TODO: check tools and versions
 "name": "common"
 "channels":
   - "bioconda"
   - "conda-forge"
   - "anaconda"
 "dependencies":
-  - "python>=3.8"
-  - "fastqc>=0.11"
-  - "cutadapt=3.4"
-  - "bwa=0.7.17"
-  - "picard>=2.5"
-  - "pretext-suite"
-  #- bcl2fastq=2.19
-
-
-  #
-  #- bowtie2=2.4
-  - samtools>=1.10
-  - mosdepth>=0.3.1
-  #- gatk4=4.2.0.0
-
-  - numpy>=1.10
-  - pandas>=1.2
-  - matplotlib
-  - bedtools>=2.26
-  - tabix
-  #- subread=2
-  #- snpeff=5.0
-  #- snpsift=4.3
-  - statsmodels>=0.12
-  - pip
-  #- bcftools
-  - xlsxwriter
-
-
-
-
-#Installation via pip - fastqcparser
-#Manual Installation - pisces=5.3
+  - "gatk3"
