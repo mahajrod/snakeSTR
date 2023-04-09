@@ -2,7 +2,7 @@
 rule extract_properly_mapped_reads:
     input:
         bam=rules.extract_alignments.output.bam,
-        bed=str_loci_bed_path
+        bed=str_repeat_bed_path
     output:
         forward_read=temp(out_dir_path / "extracted_fastq/{sample_id}/{sample_id}.extracted_1.fastq"),
         reverse_read=temp(out_dir_path / "extracted_fastq/{sample_id}/{sample_id}.extracted_2.fastq")

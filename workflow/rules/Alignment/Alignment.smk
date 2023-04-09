@@ -42,7 +42,7 @@ rule realign_bam: #
     input:
         reference=reference_path,
         bam=out_dir_path / "intermediate_bam/{sample_id}/{sample_id}.intermediate.bam",
-        bed=str_loci_bed_path
+        bed=str_repeat_bed_path
     output:
         bam=out_dir_path  / "realigned_bam/{sample_id}/{sample_id}.realigned.bam"
     log:
