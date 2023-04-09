@@ -112,10 +112,10 @@
 
 #---- Pipeline modes ----
 
-"mode": "assembly"                # Allowed: "preprocessing", "qc", "assembly"
-"preprocessing_mode": "default"   # Allowed: "default"
-"qc_mode": "default"              # Allowed: "default"
-"assembly_mode": "full"           # Allowed: "default", "full", "purge_dups", "contig"; custom modes could be set in config file
+#"mode": "assembly"                # Allowed: "preprocessing", "qc", "assembly"
+#"preprocessing_mode": "default"   # Allowed: "default"
+#"qc_mode": "default"              # Allowed: "default"
+#"assembly_mode": "full"           # Allowed: "default", "full", "purge_dups", "contig"; custom modes could be set in config file
 
 
 "parameter_set": "default" # Choice of genome-size based set of parameters

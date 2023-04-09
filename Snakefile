@@ -116,7 +116,7 @@ final_config_yaml = out_dir_path / "config/config.final.yaml"
 
 os.makedirs(out_dir_path / "config/", exist_ok=True)
 
-with open(final_config_yaml, 'w') as final_config_fd, open(final_input_yaml, 'w') as final_input_fd:
+with open(final_config_yaml, 'w') as final_config_fd:
     yaml.dump(convert_posixpath2str_in_dict(config), final_config_fd, default_flow_style=False, sort_keys=False)
 
 #-------------------------------------------
