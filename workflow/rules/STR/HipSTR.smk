@@ -59,7 +59,7 @@ rule filter_hipSTR:
     threads:
         parameters["threads"]["filter_hipSTR"]
     shell:
-         " python filter_vcf.py  --vcf {input.vcf} "
+         " filter_vcf.py  --vcf {input.vcf} "
          " --min-call-qual {params.min_call_qual} "
          " --max-call-flank-indel {params.max_call_flank_indel} "
          " --max-call-stutter {params.max_call_stutter}  "
