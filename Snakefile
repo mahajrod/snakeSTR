@@ -124,7 +124,7 @@ with open(final_config_yaml, 'w') as final_config_fd:
 #-------------------------------------------
 localrules: all
 
-results_list = [out_dir_path / "str/hipSTR.filtered.vcf.gz"]
+results_list = [out_dir_path / "str/hipSTR.filtered.vcf"]
 
 #---- Create output filelist ----
 
