@@ -37,7 +37,7 @@ rule filter_hipSTR:
     input:
         vcf=rules.hipSTR.output.vcf
     output:
-        vcf=out_dir_path / "str/hipSTR.filtered.vcf.gz",
+        vcf=out_dir_path / "str/hipSTR.filtered.vcf",
     params:
         min_call_qual=parameters["tool_options"]["hipSTR"][config["parameter_set"]]["min_call_qual"],
         max_call_flank_indel=parameters["tool_options"]["hipSTR"][config["parameter_set"]]["max_call_flank_indel"],
