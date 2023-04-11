@@ -45,6 +45,7 @@
             "samtools_fixmate": 1
             "realign_bam": 4
             "hipSTR": 1
+            "filter_hipSTR": 1
             "samtools_markdup": 1
 
         "memory_mb":
@@ -55,6 +56,7 @@
             "samtools_per_thread": 500
             "realign_bam": 3000
             "hipSTR": 3000
+            "filter_hipSTR": 3000
 
         "time": #TODO: adjust
             "extract_alignments": "00:05:00"
@@ -63,12 +65,16 @@
             "bwa_map": "04:00:00"
             "realign_bam": "04:00:00"
             "hipSTR": "02:00:00"
-
+            "filter_hipSTR": "02:00:00"
         "tool_options":
             "hipSTR":
                 "default":
                     "min_reads": 5
-
+                    "min_call_qual": 0.9
+                    "max_call_flank-indel": 0.15
+                    "max_call_stutter": 0.15
+                    "min_call_allele_bias": -2
+                    "min_call_strand_bias": -2
 "stage_coretools":     #TODO: add bionano
     "filtering":
         "hifi": "cutadapt"
