@@ -71,7 +71,7 @@
                 "default":
                     "min_reads": 5
                     "min_call_qual": 0.9
-                    "max_call_flank-indel": 0.15
+                    "max_call_flank_indel": 0.15
                     "max_call_stutter": 0.15
                     "min_call_allele_bias": -2
                     "min_call_strand_bias": -2
