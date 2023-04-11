@@ -1,10 +1,10 @@
 #---- Bioconda config for salsa2 ----
 
-"name": "salsa2"
+"name": "gatk3"
 "channels":
   - "bioconda"
   - "conda-forge"
   - "anaconda"
 "dependencies":
   - "python>=2.7"
-  - "salsa2"
+  - "gatk3"

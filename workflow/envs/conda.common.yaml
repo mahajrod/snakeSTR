@@ -5,4 +5,8 @@
   - "conda-forge"
   - "anaconda"
 "dependencies":
-  - "gatk3"
+  - "pyvcf"
+  - "samtools"
+  - "bazam"
+  - "bwa"
+  -

@@ -52,7 +52,7 @@ rule realign_bam: #
     benchmark:
         output_dict["benchmark"]  / "realign_bam.{sample_id}.benchmark.txt"
     conda:
-        config["conda"]["common"]["name"] if config["use_existing_envs"] else ("../../../%s" % config["conda"]["common"]["yaml"])
+        config["conda"]["gatk3"]["name"] if config["use_existing_envs"] else ("../../../%s" % config["conda"]["common"]["yaml"])
     resources:
         cpus=parameters["threads"]["realign_bam"] ,
         time=parameters["time"]["realign_bam"],
