@@ -37,75 +37,53 @@
 "parameters":
     "default":
         "threads":
-            "extract_alignments": 1
-            "add_flanks": 1
-            "extract_properly_mapped_reads": 4
-            "bwa_map": 4
-            "samtools_sort": 2
-            "samtools_fixmate": 1
-            "realign_bam": 4
-            "hipSTR": 1
-            "filter_hipSTR": 1
-            "samtools_markdup": 1
+            "extract_alignments":             1
+            "add_flanks":                     1
+            "extract_properly_mapped_reads":  4
+            "bwa_map":                        4
+            "samtools_sort":                  2
+            "samtools_fixmate":               1
+            "realign_bam":                    4
+            "hipSTR":                         1
+            "filter_hipSTR":                  1
+            "samtools_markdup":               1
 
         "memory_mb":
-            "extract_alignments": 1000
-            "add_flanks": 100
-            "extract_properly_mapped_reads": 3000
-            "bwa_map": 10000
-            "samtools_per_thread": 500
-            "realign_bam": 3000
-            "hipSTR": 3000
-            "filter_hipSTR": 3000
-
+            "extract_alignments":               1000
+            "add_flanks":                       100
+            "extract_properly_mapped_reads":    3000
+            "bwa_map":                          10000
+            "samtools_per_thread":              500
+            "realign_bam":                      3000
+            "hipSTR":                           3000
+            "filter_hipSTR":                    3000
         "time": #TODO: adjust
-            "extract_alignments": "00:05:00"
-            "add_flanks": "00:05:00"
-            "extract_properly_mapped_reads": "01:00:00"
-            "bwa_map": "04:00:00"
-            "realign_bam": "04:00:00"
-            "hipSTR": "02:00:00"
-            "filter_hipSTR": "02:00:00"
+            "extract_alignments":               "00:05:00"
+            "add_flanks":                       "00:05:00"
+            "extract_properly_mapped_reads":    "01:00:00"
+            "bwa_map":                          "04:00:00"
+            "realign_bam":                      "04:00:00"
+            "hipSTR":                           "02:00:00"
+            "filter_hipSTR":                    "02:00:00"
         "tool_options":
             "hipSTR":
                 "default":
-                    "min_reads": 5
-                    "min_call_qual": 0.9
-                    "max_call_flank_indel": 0.15
-                    "max_call_stutter": 0.15
-                    "min_call_allele_bias": -2
-                    "min_call_strand_bias": -2
-"stage_coretools":     #TODO: add bionano
-    "filtering":
-        "hifi": "cutadapt"
-    "contig":
-        "hifi":
-            - "hifiasm" # Allowed: "hifiasm,""hicanu", "ipa", "flye", "nextdenovo"
-        #"clr":
-        #"nanopore":
-    "purge_dups":
-        - "purge_dups"
-    "hic_scaffolding":
-        - "yahs" # Allowed: "yahs", "salsa2", "3d-dna"
+                    "min_reads":                5
+                    "min_call_qual":            0.9
+                    "max_call_flank_indel":     0.15
+                    "max_call_stutter":         0.15
+                    "min_call_allele_bias":     -2
+                    "min_call_strand_bias":     -2
+"stage_coretools": []   #TODO: add bionano
 
-"coretool_option_sets":
-    "hifiasm":
-         - "l0primary"
-         - "l1primary"
-         - "l2primary"
-         - "l3primary"
-         - "l0"
-         - "l1"
-         - "l2"
-         - "l3"
+"coretool_option_sets": []
 
 "ploidy": 2
 
-
-"bam_suffix": ".mzib.hic.purged.mkdup"
-"str_loci_bed": "str_loci.bed" # Bed file with coordinates of str loci including primers
-"flank_len": 1000 # length of flank to use for first step of alignment extraction
-"str_repeat_bed": "str_repeat.bed" # Bed file with coordinates and monomer info of the repeats within  str loci
+"bam_suffix":       ""                  # ".mzib.hic.purged.mkdup"
+"str_loci_bed":     "str_loci.bed"      # Bed file with coordinates of str loci including primers
+"flank_len":        1000                # length of flank to use for first step of alignment extraction
+"str_repeat_bed":   "str_repeat.bed"    # Bed file with coordinates and monomer info of the repeats within  str loci
 
 "reference": "reference.fasta" # bwa index files MUST have same prefix as full filename of the reference
 # Bam file names MUST follow this pattern: <sample_id><bam_suffix>.bam, where <s>
@@ -124,3 +102,4 @@
 
 "parameter_set": "default" # Choice of genome-size based set of parameters
 "use_existing_envs": True # works only if --use-conda flag was set in snakemake command
+
