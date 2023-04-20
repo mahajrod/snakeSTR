@@ -7,8 +7,8 @@ rule hipSTR:
         reference=reference_path,
         regions=str_repeat_bed_path
     output:
-        vcf=out_dir_path / "str/hipSTR.vcf.gz",
-        viz=out_dir_path / "str/hipSTR.viz.gz",
+        vcf=out_dir_path / "str/hipSTR.raw.vcf.gz",
+        viz=out_dir_path / "str/hipSTR.raw.viz.gz",
     params:
         bams=lambda wildcards: ",".join(expand(out_dir_path / "realigned_bam/{sample_id}/{sample_id}.realigned.bam",
                                                sample_id=sample_id_list)),
@@ -37,17 +37,17 @@ rule filter_hipSTR:
     input:
         vcf=rules.hipSTR.output.vcf
     output:
-        vcf=out_dir_path / "str/hipSTR.filtered.vcf",
+        vcf=out_dir_path / "str/hipSTR.filtered.vcf.gz",
     params:
-        min_call_qual=parameters["tool_options"]["hipSTR"][config["parameter_set"]]["min_call_qual"],
-        max_call_flank_indel=parameters["tool_options"]["hipSTR"][config["parameter_set"]]["max_call_flank_indel"],
-        max_call_stutter=parameters["tool_options"]["hipSTR"][config["parameter_set"]]["max_call_stutter"],
-        min_call_allele_bias=parameters["tool_options"]["hipSTR"][config["parameter_set"]]["min_call_allele_bias"],
-        min_call_strand_bias=parameters["tool_options"]["hipSTR"][config["parameter_set"]]["min_call_strand_bias"],
+        min_call_qual=parameters["tool_options"]["hipSTR"]["min_call_qual"],
+        max_call_flank_indel=parameters["tool_options"]["hipSTR"]["max_call_flank_indel"],
+        max_call_stutter=parameters["tool_options"]["hipSTR"]["max_call_stutter"],
+        min_call_allele_bias=parameters["tool_options"]["hipSTR"]["min_call_allele_bias"],
+        min_call_strand_bias=parameters["tool_options"]["hipSTR"]["min_call_strand_bias"],
     log:
         std=output_dict["log"] / "filter_hipSTR.log",
-        cluster_log=output_dict["cluster_log"] / "filter_hipSTR.log",
-        cluster_err=output_dict["cluster_error"] / "filter_hipSTR.err",
+        cluster_log=output_dict["cluster_log"] / "filter_hipSTR.cluster.log",
+        cluster_err=output_dict["cluster_error"] / "filter_hipSTR.vluster.err",
     benchmark:
         output_dict["benchmark"] / "filter_hipSTR.benchmark.txt"
     conda:
@@ -64,4 +64,36 @@ rule filter_hipSTR:
          " --max-call-flank-indel {params.max_call_flank_indel} "
          " --max-call-stutter {params.max_call_stutter}  "
          " --min-call-allele-bias {params.min_call_allele_bias} "
-         " --min-call-strand-bias {params.min_call_strand_bias} > {output.vcf} 2>{log.std}"
+         " --min-call-strand-bias {params.min_call_strand_bias} | gzip -c > {output.vcf} 2>{log.std}"
+
+rule convert_hipSTR_vcf:
+    priority: 1000
+    input:
+        vcf=out_dir_path / "str/hipSTR.{stage}.vcf.gz"
+    output:
+        str_tab=out_dir_path / "str/hipSTR.allels.{stage}.str.tab",
+        loci_tab=out_dir_path / "str/hipSTR.allels.{stage}.loci.tab"
+    params:
+        absent_allel_alias=config["absent_allel_alias"],
+        len_file=" -l {0} --amplicon_id_column_name {1} --amplicon_len_column_name {2} ".format(config["str_loci_len_file"],
+                                                                                                parameters["tool_options"]["amplicon_id_column_name"]["min_call_qual"],
+                                                                                                parameters["tool_options"]["amplicon_len_column_name"]["min_call_qual"],) if config["str_loci_len_file"] else "",
+        postprocessing= " | sed '1s/^[^\t]*\t//' " if config["stage_coretools"]["admixture"] == "structure" else "" # remove first column label from header for compatibility with STRUCTURE
+    log:
+        str=output_dict["log"] / "convert_hipSTR_vcf.{stage}.str.log",
+        loci=output_dict["log"] / "convert_hipSTR_vcf.{stage}.loci.log",
+        cluster_log=output_dict["cluster_log"] / "convert_hipSTR_vcf.{stage}.cluster.log",
+        cluster_err=output_dict["cluster_error"] / "convert_hipSTR_vcf.{stage}.cluster.err",
+    benchmark:
+        output_dict["benchmark"] / "convert_hipSTR_vcf.{stage}.benchmark.txt"
+    conda:
+        config["conda"]["common"]["name"] if config["use_existing_envs"] else ("../../../%s" % config["conda"]["common"]["yaml"])
+    resources:
+        cpus=parameters["threads"]["convert_hipSTR_vcf"],
+        time=parameters["time"]["convert_hipSTR_vcf"],
+        mem=parameters["memory_mb"]["convert_hipSTR_vcf"],
+    threads:
+        parameters["threads"]["convert_hipSTR_vcf"]
+    shell:
+         " convert_STR_vcf_to_allel_length.py -i {input.vcf} {params.len_file} 2>{log.loci} {params.postprocessing} > {output.loci_tab};"
+         " convert_STR_vcf_to_allel_length.py -i {input.vcf}  2>{log.str} {params.postprocessing} > {output.str_tab};"

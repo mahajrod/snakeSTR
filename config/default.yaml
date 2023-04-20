@@ -47,6 +47,9 @@
             "hipSTR":                         1
             "filter_hipSTR":                  1
             "samtools_markdup":               1
+            "convert_hipSTR_vcf":             1
+            "structure":                      1
+            "generate_config_for_structure":  1
 
         "memory_mb":
             "extract_alignments":               1000
@@ -57,6 +60,10 @@
             "realign_bam":                      3000
             "hipSTR":                           3000
             "filter_hipSTR":                    3000
+            "convert_hipSTR_vcf":               3000
+            "structure":                        3000
+            "generate_config_for_structure":    100
+
         "time": #TODO: adjust
             "extract_alignments":               "00:05:00"
             "add_flanks":                       "00:05:00"
@@ -65,16 +72,70 @@
             "realign_bam":                      "04:00:00"
             "hipSTR":                           "02:00:00"
             "filter_hipSTR":                    "02:00:00"
+            "convert_hipSTR_vcf":               "01:00:00"
+            "structure":                        "04:00:00"
+            "generate_config_for_structure":    "00:05:00"
+
         "tool_options":
             "hipSTR":
-                "default":
-                    "min_reads":                5
-                    "min_call_qual":            0.9
-                    "max_call_flank_indel":     0.15
-                    "max_call_stutter":         0.15
-                    "min_call_allele_bias":     -2
-                    "min_call_strand_bias":     -2
-"stage_coretools": []   #TODO: add bionano
+                "min_reads":                5
+                "min_call_qual":            0.9
+                "max_call_flank_indel":     0.15
+                "max_call_stutter":         0.15
+                "min_call_allele_bias":     -2
+                "min_call_strand_bias":     -2
+            "convert_hipSTR_vcf":
+                "amplicon_id_column_name":  "primer_pair"
+                "amplicon_len_column_name": "amplicon_len"
+            "structure":
+                "K_list":
+                    - 2
+                    - 3
+                    - 4
+                    - 5
+                    - 6
+                "config_file_parameters":
+                    "BURNIN":                    100000
+                    "NUMREPS":                   1000000
+                    "LABEL":                     1
+                    "POPDATA":                   0
+                    "POPFLAG":                   0
+                    "LOCDATA":                   0
+                    "PHENOTYPE":                 0
+                    "MARKERNAMES":               1
+                    "MAPDISTANCES":              0
+                    "ONEROWPERIND":              0
+                    "PHASEINFO":                 0
+                    "PHASED":                    0
+                    "RECESSIVEALLELES":          0
+                    "EXTRACOLS":                 0
+                    "NOADMIX":                   0
+                    "LINKAGE":                   0
+                    "USEPOPINFO":                0
+                    "LOCPRIOR":                  0
+                    "INFERALPHA":                1
+                    "ALPHA":                     1.0
+                    "POPALPHAS":                 0
+                    "UNIFPRIORALPHA":            1
+                    "ALPHAMAX":                  10.0
+                    "ALPHAPROPSD":               0.025
+                    "FREQSCORR":                 1
+                    "ONEFST":                    0
+                    "FPRIORMEAN":                0.01
+                    "FPRIORSD":                  0.05
+                    "INFERLAMBDA":               0
+                    "LAMBDA":                    1.0
+                    "COMPUTEPROB":               1
+                    "PFROMPOPFLAGONLY":          0
+                    "ANCESTDIST":                0
+                    "STARTATPOPINFO":            0
+                    "METROFREQ":                 10
+                    "UPDATEFREQ":                1
+"stage_coretools":
+    "alignment":            "bwa"
+    "indel_realignment":    "gatk3"
+    "str_calling":          "hipSTR"
+    "admixture":            "structure"
 
 "coretool_option_sets": []
 
@@ -84,6 +145,10 @@
 "str_loci_bed":     "str_loci.bed"      # Bed file with coordinates of str loci including primers
 "flank_len":        1000                # length of flank to use for first step of alignment extraction
 "str_repeat_bed":   "str_repeat.bed"    # Bed file with coordinates and monomer info of the repeats within  str loci
+"str_loci_len_file": null
+
+"absent_allel_alias": "-100"
+
 
 "reference": "reference.fasta" # bwa index files MUST have same prefix as full filename of the reference
 # Bam file names MUST follow this pattern: <sample_id><bam_suffix>.bam, where <s>
