@@ -145,6 +145,6 @@ include: "workflow/rules/Alignment/Samtools.smk"
 include: "workflow/rules/Alignment/Bazam.smk"
 include: "workflow/rules/Alignment/Alignment.smk"
 include: "workflow/rules/STR/HipSTR.smk"
-
+include: "workflow/rules/Admixture/STRUCTURE.smk"
 
 #----
