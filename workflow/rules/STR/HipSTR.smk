@@ -76,8 +76,8 @@ rule convert_hipSTR_vcf:
     params:
         absent_allel_alias=config["absent_allel_alias"],
         len_file=" -l {0} --amplicon_id_column_name {1} --amplicon_len_column_name {2} ".format(config["str_loci_len_file"],
-                                                                                                parameters["tool_options"]["amplicon_id_column_name"]["min_call_qual"],
-                                                                                                parameters["tool_options"]["amplicon_len_column_name"]["min_call_qual"],) if config["str_loci_len_file"] else "",
+                                                                                                parameters["tool_options"]["convert_hipSTR_vcf"]["amplicon_id_column_name"],
+                                                                                                parameters["tool_options"]["convert_hipSTR_vcf"]["amplicon_len_column_name"],) if config["str_loci_len_file"] else "",
         postprocessing= " | sed '1s/^[^\t]*\t//' " if config["stage_coretools"]["admixture"] == "structure" else "" # remove first column label from header for compatibility with STRUCTURE
     log:
         str=output_dict["log"] / "convert_hipSTR_vcf.{stage}.str.log",
