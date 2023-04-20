@@ -12,7 +12,7 @@ rule hipSTR:
     params:
         bams=lambda wildcards: ",".join(expand(out_dir_path / "realigned_bam/{sample_id}/{sample_id}.realigned.bam",
                                                sample_id=sample_id_list)),
-        min_reads=parameters["tool_options"]["hipSTR"][config["parameter_set"]]["min_reads"],
+        min_reads=parameters["tool_options"]["hipSTR"]["min_reads"],
     log:
         std=output_dict["log"] / "hipSTR.log",
         err=output_dict["log"] / "hipSTR.err",
