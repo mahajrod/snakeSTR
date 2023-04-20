@@ -19,11 +19,11 @@ rule generate_config_for_structure:
     #conda:
     #    config["conda"]["common"]["name"] if config["use_existing_envs"] else ("../../../%s" % config["conda"]["common"]["yaml"])
     resources:
-        cpus=parameters["threads"]["generate_config_for_structure:"],
-        time=parameters["time"]["generate_config_for_structure:"],
-        mem=parameters["memory_mb"]["generate_config_for_structure:"],
+        cpus=parameters["threads"]["generate_config_for_structure"],
+        time=parameters["time"]["generate_config_for_structure"],
+        mem=parameters["memory_mb"]["generate_config_for_structure"],
     threads:
-        parameters["threads"]["generate_config_for_structure:"]
+        parameters["threads"]["generate_config_for_structure"]
     run:
         with open(input.loci_tab) as in_fd:
             number_of_loci = len(in_fd.readline().split("\t"))
