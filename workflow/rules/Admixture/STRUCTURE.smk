@@ -6,6 +6,7 @@ rule generate_config_for_structure:
         loci_tab=out_dir_path / "str/hipSTR.allels.{stage}.loci.tab"
     output:
         config=out_dir_path / "admixture/structure/{stage}/structure.K{K}.R{run}.config",
+        extra_config=out_dir_path / "admixture/structure/{stage}/structure.K{K}.R{run}.config.extra"
     params:
         output_prefix=lambda wildcards: out_dir_path / "admxture/structure/{0}/structure.K{1}.R{2}".format(wildcards.stage,
                                                                                                            wildcards.K,
@@ -46,12 +47,17 @@ rule generate_config_for_structure:
             for parameter in parameters["tool_options"]["structure"]["config_file_parameters"]:
                 out_fd.write("#define {0} {1}\n".format(parameter,
                                                         parameters["tool_options"]["structure"]["config_file_parameters"][parameter]))
+        with open(output.extra_config,"w") as out_fd:
+            for extra_parameter in parameters["tool_options"]["structure"]["extra_config_file_parameters"]:
+                out_fd.write("#define {0} {1}\n".format(extra_parameter,
+                                                        parameters["tool_options"]["structure"]["config_file_parameters"][extra_parameter]))
 
 rule structure:
     priority: 1000
     input:
         loci_tab=out_dir_path / "str/hipSTR.allels.{stage}.loci.tab",
-        config=rules.generate_config_for_structure.output.config
+        config=rules.generate_config_for_structure.output.config,
+        extra_config=rules.generate_config_for_structure.output.extra_config
     output:
         res=out_dir_path / "admixture/structure/{stage}/structure.K{K}.R{run}_f",
 
@@ -59,7 +65,7 @@ rule structure:
         output_prefix=lambda wildcards: out_dir_path / "admxture/structure/{0}/structure.K{1}.R{2}".format(wildcards.stage,
                                                                                                            wildcards.K,
                                                                                                            wildcards.run),
-        extraparams_file=parameters["tool_options"]["structure"]["extraparams_file"]
+        #extraparams_file=parameters["tool_options"]["structure"]["extraparams_file"]
     log:
         std=output_dict["log"] / "structure.{stage}.{K}.{run}.log",
         err=output_dict["log"] / "structure.{stage}.{K}.{run}.err",
@@ -79,4 +85,4 @@ rule structure:
          #" NUM_LINES=`wc -l {input.loci_tab} | cut -f 1 -d ' '`; "
          #" let NUM_INDIV=(${{NUM_LINES}}-1)/2;"
          #" NUM_LOCI=`head -n 1 {input.loci_tab} | awk -F'\t' '{{print NF}}'`; "
-         " structure -m {input.config} -e {params.extraparams_file} > {log.std} 2>{log.err}" # -K {wildcards.K} -L ${{NUM_LOCI}} -N ${{NUM_INDIV}}  -i {input.loci_tab} -o {params.output_prefix}
+         " structure -m {input.config} -e {input.extra_config} > {log.std} 2>{log.err}" # -K {wildcards.K} -L ${{NUM_LOCI}} -N ${{NUM_INDIV}}  -i {input.loci_tab} -o {params.output_prefix}

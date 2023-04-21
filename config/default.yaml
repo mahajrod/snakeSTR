@@ -132,6 +132,8 @@
                     "STARTATPOPINFO":            0
                     "METROFREQ":                 10
                     "UPDATEFREQ":                1
+                "extra_config_file_parameters": []
+
 "stage_coretools":
     "alignment":            "bwa"
     "indel_realignment":    "gatk3"
