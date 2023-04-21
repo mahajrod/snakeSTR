@@ -78,4 +78,4 @@ rule structure:
          #" NUM_LINES=`wc -l {input.loci_tab} | cut -f 1 -d ' '`; "
          #" let NUM_INDIV=(${{NUM_LINES}}-1)/2;"
          #" NUM_LOCI=`head -n 1 {input.loci_tab} | awk -F'\t' '{{print NF}}'`; "
-         " structure -m {input.config} > {log.std}" # -K {wildcards.K} -L ${{NUM_LOCI}} -N ${{NUM_INDIV}}  -i {input.loci_tab} -o {params.output_prefix}
+         " structure -m {input.config} > {log.std} 2>{log.err}" # -K {wildcards.K} -L ${{NUM_LOCI}} -N ${{NUM_INDIV}}  -i {input.loci_tab} -o {params.output_prefix}
