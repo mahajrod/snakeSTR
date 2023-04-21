@@ -25,14 +25,14 @@ rule generate_config_for_structure:
     threads:
         parameters["threads"]["generate_config_for_structure"]
     run:
-        with open(input.loci_tab) as in_fd:
+        with open(input.loci_tab, "r") as in_fd:
             number_of_loci = len(in_fd.readline().split("\t"))
             number_of_individuals = 0
             for line in in_fd:
                 number_of_individuals += 1
             number_of_individuals /= 2
 
-        with open(output.config) as out_fd:
+        with open(output.config, "w") as out_fd:
             out_fd.write("#define OUTFILE {0}\n".format(params.output_prefix))
             out_fd.write("#define INFILE {0}\n".format(input.loci_tab))
             out_fd.write("#define MISSING {0}\n".format(config["absent_allel_alias"]))
