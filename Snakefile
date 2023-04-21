@@ -125,7 +125,7 @@ with open(final_config_yaml, 'w') as final_config_fd:
 localrules: all
 
 results_list = [out_dir_path / "str/hipSTR.filtered.vcf",
-                expand(out_dir_path / "admxture/structure/{stage}/structure.K{K}.R{run}_f",
+                expand(out_dir_path / "admixture/structure/{stage}/structure.K{K}.R{run}_f",
                       stage=["raw", "filtered"],
                       K=parameters["tool_options"]["structure"]["K_list"],
                       run=[0, 1, 2])]

@@ -5,7 +5,7 @@ rule generate_config_for_structure:
     input:
         loci_tab=out_dir_path / "str/hipSTR.allels.{stage}.loci.tab"
     output:
-        config=out_dir_path / "admxture/structure/{stage}/structure.K{K}.R{run}.config",
+        config=out_dir_path / "admixture/structure/{stage}/structure.K{K}.R{run}.config",
     params:
         output_prefix=lambda wildcards: out_dir_path / "admxture/structure/{0}/structure.K{1}.R{2}".format(wildcards.stage,
                                                                                                            wildcards.K,
@@ -32,6 +32,8 @@ rule generate_config_for_structure:
                 number_of_individuals += 1
             number_of_individuals /= 2
 
+        output.config.parent.mkdir(parents=True, exist_ok=True)
+
         with open(output.config, "w") as out_fd:
             out_fd.write("#define OUTFILE {0}\n".format(params.output_prefix))
             out_fd.write("#define INFILE {0}\n".format(input.loci_tab))
@@ -51,7 +53,7 @@ rule structure:
         loci_tab=out_dir_path / "str/hipSTR.allels.{stage}.loci.tab",
         config=rules.generate_config_for_structure.output.config
     output:
-        res=out_dir_path / "admxture/structure/{stage}/structure.K{K}.R{run}_f",
+        res=out_dir_path / "admixture/structure/{stage}/structure.K{K}.R{run}_f",
 
     params:
         output_prefix=lambda wildcards: out_dir_path / "admxture/structure/{0}/structure.K{1}.R{2}".format(wildcards.stage,
