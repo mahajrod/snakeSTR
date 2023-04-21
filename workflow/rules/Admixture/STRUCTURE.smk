@@ -32,7 +32,7 @@ rule generate_config_for_structure:
                 number_of_individuals += 1
             number_of_individuals /= 2
 
-        output.config.parent.mkdir(parents=True, exist_ok=True)
+        Path(output.config).parent.mkdir(parents=True, exist_ok=True)
 
         with open(output.config, "w") as out_fd:
             out_fd.write("#define OUTFILE {0}\n".format(params.output_prefix))
