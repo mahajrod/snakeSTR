@@ -59,7 +59,7 @@ rule structure:
         output_prefix=lambda wildcards: out_dir_path / "admxture/structure/{0}/structure.K{1}.R{2}".format(wildcards.stage,
                                                                                                            wildcards.K,
                                                                                                            wildcards.run),
-        extraparams_file=parameters["tool_options"]["structure"]["extraparams_file":]
+        extraparams_file=parameters["tool_options"]["structure"]["extraparams_file"]
     log:
         std=output_dict["log"] / "structure.{stage}.{K}.{run}.log",
         err=output_dict["log"] / "structure.{stage}.{K}.{run}.err",
