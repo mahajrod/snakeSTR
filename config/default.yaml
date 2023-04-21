@@ -96,8 +96,8 @@
                     - 5
                     - 6
                 "config_file_parameters":
-                    "BURNIN":                    10000
-                    "NUMREPS":                   100000
+                    "BURNIN":                    1000
+                    "NUMREPS":                   10000
                     "LABEL":                     1
                     "POPDATA":                   0
                     "POPFLAG":                   0
