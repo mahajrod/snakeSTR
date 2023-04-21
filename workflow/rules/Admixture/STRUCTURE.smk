@@ -30,7 +30,7 @@ rule generate_config_for_structure:
             number_of_individuals = 0
             for line in in_fd:
                 number_of_individuals += 1
-            number_of_individuals /= 2
+            number_of_individuals //= 2
 
         Path(output.config).parent.mkdir(parents=True, exist_ok=True)
 
