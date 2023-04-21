@@ -45,7 +45,7 @@ rule generate_config_for_structure:
 
             for parameter in parameters["tool_options"]["structure"]["config_file_parameters"]:
                 out_fd.write("#define {0} {1}\n".format(parameter,
-                                                        parameters["tool_options"]["structure"]["config_file_parameters"]["parameter"]))
+                                                        parameters["tool_options"]["structure"]["config_file_parameters"][parameter]))
 
 rule structure:
     priority: 1000
