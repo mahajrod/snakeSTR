@@ -88,6 +88,7 @@
                 "amplicon_id_column_name":  "primer_pair"
                 "amplicon_len_column_name": "amplicon_len"
             "structure":
+                "extraparams_file": "config/tools/structure/extraparams"
                 "K_list":
                     - 2
                     - 3

@@ -58,7 +58,8 @@ rule structure:
     params:
         output_prefix=lambda wildcards: out_dir_path / "admxture/structure/{0}/structure.K{1}.R{2}".format(wildcards.stage,
                                                                                                            wildcards.K,
-                                                                                                           wildcards.run)
+                                                                                                           wildcards.run),
+        extraparams_file=parameters["tool_options"]["structure"]["extraparams_file":]
     log:
         std=output_dict["log"] / "structure.{stage}.{K}.{run}.log",
         err=output_dict["log"] / "structure.{stage}.{K}.{run}.err",
@@ -78,4 +79,4 @@ rule structure:
          #" NUM_LINES=`wc -l {input.loci_tab} | cut -f 1 -d ' '`; "
          #" let NUM_INDIV=(${{NUM_LINES}}-1)/2;"
          #" NUM_LOCI=`head -n 1 {input.loci_tab} | awk -F'\t' '{{print NF}}'`; "
-         " structure -m {input.config} > {log.std} 2>{log.err}" # -K {wildcards.K} -L ${{NUM_LOCI}} -N ${{NUM_INDIV}}  -i {input.loci_tab} -o {params.output_prefix}
+         " structure -m {input.config} -e {params.extraparams_file} > {log.std} 2>{log.err}" # -K {wildcards.K} -L ${{NUM_LOCI}} -N ${{NUM_INDIV}}  -i {input.loci_tab} -o {params.output_prefix}
