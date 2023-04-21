@@ -8,7 +8,7 @@ rule generate_config_for_structure:
         config=out_dir_path / "admixture/structure/{stage}/structure.K{K}.R{run}.config",
         extra_config=out_dir_path / "admixture/structure/{stage}/structure.K{K}.R{run}.config.extra"
     params:
-        output_prefix=lambda wildcards: out_dir_path / "admxture/structure/{0}/structure.K{1}.R{2}".format(wildcards.stage,
+        output_prefix=lambda wildcards: out_dir_path / "admxiture/structure/{0}/structure.K{1}.R{2}".format(wildcards.stage,
                                                                                                            wildcards.K,
                                                                                                            wildcards.run)
     log:
@@ -62,7 +62,7 @@ rule structure:
         res=out_dir_path / "admixture/structure/{stage}/structure.K{K}.R{run}_f",
 
     params:
-        output_prefix=lambda wildcards: out_dir_path / "admxture/structure/{0}/structure.K{1}.R{2}".format(wildcards.stage,
+        output_prefix=lambda wildcards: out_dir_path / "admixture/structure/{0}/structure.K{1}.R{2}".format(wildcards.stage,
                                                                                                            wildcards.K,
                                                                                                            wildcards.run),
         #extraparams_file=parameters["tool_options"]["structure"]["extraparams_file"]
