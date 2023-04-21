@@ -73,7 +73,7 @@
             "hipSTR":                           "02:00:00"
             "filter_hipSTR":                    "02:00:00"
             "convert_hipSTR_vcf":               "01:00:00"
-            "structure":                        "04:00:00"
+            "structure":                        "12:00:00"
             "generate_config_for_structure":    "00:05:00"
 
         "tool_options":
