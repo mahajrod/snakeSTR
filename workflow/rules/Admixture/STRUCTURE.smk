@@ -170,6 +170,7 @@ rule generate_config_for_clumpp:
         Path(output.config).parent.mkdir(parents=True, exist_ok=True)
 
         with open(output.config, "w") as out_fd:
+            out_fd.write("DATATYPE {0}\n\n".format(parameters["tool_options"]["clumpp"]["config_file_parameters"]["DATATYPE"])) # This parameter must be in the very beginning of the config file. Otherwise INDFILE will not be parsed correctly.
             out_fd.write("INDFILE {0}\n\n".format(input.clumpp_input))
             out_fd.write("OUTFILE {0}.output\n\n".format(params.output_prefix))
             out_fd.write("MISCFILE {0}.miscfile\n\n".format(params.output_prefix))
@@ -179,6 +180,8 @@ rule generate_config_for_clumpp:
             out_fd.write("R {0}\n\n".format(len(structure_run_id_list)))
 
             for parameter in parameters["tool_options"]["clumpp"]["config_file_parameters"]:
+                if parameter == "DATATYPE":
+                    continue
                 out_fd.write("{0} {1}\n\n".format(parameter,
                                                 parameters["tool_options"]["clumpp"]["config_file_parameters"][parameter]))
 
