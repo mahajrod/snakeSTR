@@ -170,16 +170,16 @@ rule generate_config_for_clumpp:
         Path(output.config).parent.mkdir(parents=True, exist_ok=True)
 
         with open(output.config, "w") as out_fd:
-            out_fd.write("INDFILE {0}\n".format(input.clumpp_input))
-            out_fd.write("OUTFILE {0}.output\n".format(params.output_prefix))
-            out_fd.write("MISCFILE {0}.miscfile\n".format(params.output_prefix))
-            out_fd.write("PERMUTED_DATAFILE {0}.permutted.Rall\n".format(params.output_prefix))
-            out_fd.write("K {0}\n".format(wildcards.K))
-            out_fd.write("C {0}\n".format(number_of_individuals))
-            out_fd.write("R {0}\n".format(len(structure_run_id_list)))
+            out_fd.write("INDFILE {0}\n\n".format(input.clumpp_input))
+            out_fd.write("OUTFILE {0}.output\n\n".format(params.output_prefix))
+            out_fd.write("MISCFILE {0}.miscfile\n\n".format(params.output_prefix))
+            out_fd.write("PERMUTED_DATAFILE {0}.permutted.Rall\n\n".format(params.output_prefix))
+            out_fd.write("K {0}\n\n".format(wildcards.K))
+            out_fd.write("C {0}\n\n".format(number_of_individuals))
+            out_fd.write("R {0}\n\n".format(len(structure_run_id_list)))
 
             for parameter in parameters["tool_options"]["clumpp"]["config_file_parameters"]:
-                out_fd.write("{0} {1}\n".format(parameter,
+                out_fd.write("{0} {1}\n\n".format(parameter,
                                                 parameters["tool_options"]["clumpp"]["config_file_parameters"][parameter]))
 
 
