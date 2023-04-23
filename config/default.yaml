@@ -200,7 +200,7 @@
                         # override non-crucial warnings from
                         # the program (0 allow warnings, 1 do
                         # not issue non-crucial warnings).
-                    "ORDER_BY_RUN":                 + 1                # Permute the clusters of the output
+                    "ORDER_BY_RUN":                 1                # Permute the clusters of the output
 
 "stage_coretools":
     "alignment":            "bwa"
