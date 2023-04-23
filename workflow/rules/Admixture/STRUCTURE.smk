@@ -113,7 +113,7 @@ rule extract_q_table:
 rule prepare_clumpp_input:
     priority: 1000
     input:
-        structure_output=expand(rules.extract_q_table.output.res, run=structure_run_id_list)
+        structure_output=expand(rules.extract_q_table.output.res, run=structure_run_id_list, allow_missing=True)
     output:
         res=out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.input",
     log:
