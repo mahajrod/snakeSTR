@@ -131,6 +131,7 @@ results_list = [out_dir_path / "str/hipSTR.filtered.vcf",
                       K=parameters["tool_options"]["structure"]["K_list"],
                       run=structure_run_id_list),
                 expand(out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.output",
+                       stage=["raw", "filtered"],
                        K=parameters["tool_options"]["structure"]["K_list"])]
 
 #---- Create output filelist ----
