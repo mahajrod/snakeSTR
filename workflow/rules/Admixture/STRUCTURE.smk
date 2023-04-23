@@ -186,8 +186,7 @@ rule generate_config_for_clumpp:
                                                 parameters["tool_options"]["clumpp"]["config_file_parameters"][parameter]))
 
                 if parameter == "PRINT_PERMUTED_DATA":
-                    out_fd.write("PERMUTED_DATAFILE {0}.permutted.Rall\n\n".format(params.output_prefix))
-
+                    out_fd.write("PERMUTED_DATAFILE {0}.permutted.R\n\n".format(params.output_prefix)) # This parameter must be after PRINT_PERMUTED_DATA, otherwise it will be ignored and permuted data will not be printed
 
 rule clumpp:
     priority: 1000
@@ -197,7 +196,9 @@ rule clumpp:
         config=out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.config"
     output:
         out=out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.output",
-        permutted=out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.permutted.Rall",
+        permutted=expand(out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.permutted.R_{run}",
+                         run=structure_run_id_list,
+                        allow_missing=True)
     log:
         std=output_dict["log"] / "clumpp.{stage}.{K}.log",
         cluster_log=output_dict["cluster_log"] / "clumpp.cluster.{stage}.{K}.log",

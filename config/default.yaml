@@ -54,6 +54,7 @@
             "prepare_clumpp_input":           1
             "generate_config_for_clumpp":     1
             "clumpp":                         1
+            "pong":                           2
 
         "memory_mb":
             "extract_alignments":               1000
@@ -71,6 +72,7 @@
             "prepare_clumpp_input":             100
             "generate_config_for_clumpp":       100
             "clumpp":                           3000
+            "pong":                             3000
 
         "time": #TODO: adjust
             "extract_alignments":               "00:05:00"
@@ -87,6 +89,8 @@
             "prepare_clumpp_input":             "00:05:00"
             "generate_config_for_clumpp":       "00:05:00"
             "clumpp":                           "02:00:00"
+            "pong":                             "02:00:00"
+
         "tool_options":
             "hipSTR":
                 "min_reads":                5
@@ -175,7 +179,7 @@
                         # = 3, then REPEATS is the number of
                         # input orders in PERMUTATIONFILE.
                      # --------------- Optional outputs --------------------------------------------
-                    "PRINT_PERMUTED_DATA":       1
+                    "PRINT_PERMUTED_DATA":       2
                         # Print the permuted data (clusters) in
                         # INDFILE or POPFILE to
                         # PERMUTED_DATAFILE (0 = don't print,

@@ -123,7 +123,7 @@ with open(final_config_yaml, 'w') as final_config_fd:
 
 #-------------------------------------------
 localrules: all
-structure_run_id_list = range(0, parameters["tool_options"]["structure"]["number_of_runs"])
+structure_run_id_list = range(1, parameters["tool_options"]["structure"]["number_of_runs"] + 1)
 
 results_list = [out_dir_path / "str/hipSTR.filtered.vcf",
                 expand(out_dir_path / "admixture/structure/{stage}/structure.K{K}.R{run}_f",
