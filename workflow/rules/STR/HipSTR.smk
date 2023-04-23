@@ -84,7 +84,8 @@ rule convert_hipSTR_vcf:
         vcf=out_dir_path / "str/hipSTR.{stage}.vcf.gz"
     output:
         str_tab=out_dir_path / "str/hipSTR.allels.{stage}.str.tab",
-        loci_tab=out_dir_path / "str/hipSTR.allels.{stage}.loci.tab"
+        loci_tab=out_dir_path / "str/hipSTR.allels.{stage}.loci.tab",
+        pop_tab=out_dir_path / "str/hipSTR.allels.{stage}.pop.tab"
     params:
         absent_allel_alias=config["absent_allel_alias"],
         len_file=" -l {0} --amplicon_id_column_name {1} --amplicon_len_column_name {2} ".format(config["str_loci_len_file"],
@@ -110,6 +111,7 @@ rule convert_hipSTR_vcf:
         parameters["threads"]["convert_hipSTR_vcf"]
     shell:
          " convert_STR_vcf_to_allel_length.py {params.add_population_column} {params.pop_file} --encode_ids "
+         " --pop_df_file {output.pop_tab} "
          " -i {input.vcf} {params.len_file} 2>{log.loci} {params.postprocessing} > {output.loci_tab};"
          " convert_STR_vcf_to_allel_length.py {params.add_population_column} {params.pop_file} --encode_ids "
          " -i {input.vcf}  2>{log.str} {params.postprocessing} > {output.str_tab};"
