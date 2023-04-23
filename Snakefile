@@ -123,12 +123,15 @@ with open(final_config_yaml, 'w') as final_config_fd:
 
 #-------------------------------------------
 localrules: all
+structure_run_id_list = range(0, parameters["tool_options"]["structure"]["number_of_runs"])
 
 results_list = [out_dir_path / "str/hipSTR.filtered.vcf",
                 expand(out_dir_path / "admixture/structure/{stage}/structure.K{K}.R{run}_f",
                       stage=["raw", "filtered"],
                       K=parameters["tool_options"]["structure"]["K_list"],
-                      run=[0, 1, 2])]
+                      run=structure_run_id_list),
+                expand(out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.output",
+                       K=parameters["tool_options"]["structure"]["K_list"])]
 
 #---- Create output filelist ----
 

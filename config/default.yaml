@@ -50,6 +50,10 @@
             "convert_hipSTR_vcf":             1
             "structure":                      1
             "generate_config_for_structure":  1
+            "extract_q_table":                1
+            "prepare_clumpp_input":           1
+            "generate_config_for_clumpp":     1
+            "clumpp":                         1
 
         "memory_mb":
             "extract_alignments":               1000
@@ -63,6 +67,10 @@
             "convert_hipSTR_vcf":               3000
             "structure":                        3000
             "generate_config_for_structure":    100
+            "extract_q_table":                  100
+            "prepare_clumpp_input":             100
+            "generate_config_for_clumpp":       100
+            "clumpp":                           3000
 
         "time": #TODO: adjust
             "extract_alignments":               "00:05:00"
@@ -75,7 +83,10 @@
             "convert_hipSTR_vcf":               "01:00:00"
             "structure":                        "12:00:00"
             "generate_config_for_structure":    "00:05:00"
-
+            "extract_q_table":                  "00:10:00"
+            "prepare_clumpp_input":             "00:05:00"
+            "generate_config_for_clumpp":       "00:05:00"
+            "clumpp":                           "02:00:00"
         "tool_options":
             "hipSTR":
                 "min_reads":                5
@@ -89,6 +100,7 @@
                 "amplicon_len_column_name": "amplicon_len"
             "structure":
                 "extraparams_file": "config/tools/structure/extraparams"
+                "number_of_runs": 3
                 "K_list":
                     - 2
                     - 3
@@ -133,6 +145,62 @@
                     "METROFREQ":                 10
                     "UPDATEFREQ":                1
                 "extra_config_file_parameters": []
+            "clumpp":
+                "config_file_parameters":
+                    "DATATYPE":                  0
+                        # The type of data to be read in.
+                        # 0 = individual data in the file
+                        # specified by INDFILE, 1 = population
+                        # data in the file specified by
+                        # POPFILE.
+                    "M":                         1
+                        # Method to be used (1 = FullSearch,
+                        # 2 = Greedy, 3 = LargeKGreedy).
+                    "W":                         0
+                        # Weight by the number of individuals
+                        # in each population as specified in
+                        # the datafile (1 if yes, 0 if no).
+                    "S":                         2
+                        # Pairwise matrix similarity statistic
+                        # to be used. 1 = G, 2 = G'.
+                    # - Additional options for the Greedy and LargeKGreedy algorithm (M = 2 or 3) -
+                    "GREEDY_OPTION":             2
+                        # 1 = All possible input orders,
+                        # 2 = random input orders,
+                        # 3 = pre-specified input orders.
+                    "REPEATS":                   100
+                        # If GREEDY_OPTION = 2, then REPEATS
+                        # determines the number of random input
+                        # orders to be tested. If GREEDY_OPTION
+                        # = 3, then REPEATS is the number of
+                        # input orders in PERMUTATIONFILE.
+                     # --------------- Optional outputs --------------------------------------------
+                    "PRINT_PERMUTED_DATA":       1
+                        # Print the permuted data (clusters) in
+                        # INDFILE or POPFILE to
+                        # PERMUTED_DATAFILE (0 = don't print,
+                        # 1 = print into one file, 2 = print
+                        # into separate files for each run).
+                    "PRINT_EVERY_PERM":          0
+                        # Print every tested permutation of the
+                        # runs and the corresponding value of
+                        # H to a file specified by
+                        # EVERY_PERMFILE (0 = don't print,
+                        # 1 = print).
+                        # Note that printing may result in a
+                        # very large file.
+                    "PRINT_RANDOM_INPUTORDER":      0
+                        # Print random input orders of runs to
+                        # RANDOM_INPUTORDER (0 = don't print,
+                        # 1 = print). This option is only
+                        # available if GREEDY_OPTION = 2.
+                    # --------------- Advanced options --------------------------------------------
+                    "OVERRIDE_WARNINGS":             0
+                        # This option allows the user to
+                        # override non-crucial warnings from
+                        # the program (0 allow warnings, 1 do
+                        # not issue non-crucial warnings).
+                    "ORDER_BY_RUN":                 + 1                # Permute the clusters of the output
 
 "stage_coretools":
     "alignment":            "bwa"
