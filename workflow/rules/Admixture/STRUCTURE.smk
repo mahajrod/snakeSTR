@@ -174,7 +174,7 @@ rule generate_config_for_clumpp:
             out_fd.write("INDFILE {0}\n\n".format(input.clumpp_input))
             out_fd.write("OUTFILE {0}.output\n\n".format(params.output_prefix))
             out_fd.write("MISCFILE {0}.miscfile\n\n".format(params.output_prefix))
-            out_fd.write("PERMUTED_DATAFILE {0}.permutted.Rall\n\n".format(params.output_prefix))
+
             out_fd.write("K {0}\n\n".format(wildcards.K))
             out_fd.write("C {0}\n\n".format(number_of_individuals))
             out_fd.write("R {0}\n\n".format(len(structure_run_id_list)))
@@ -184,6 +184,9 @@ rule generate_config_for_clumpp:
                     continue
                 out_fd.write("{0} {1}\n\n".format(parameter,
                                                 parameters["tool_options"]["clumpp"]["config_file_parameters"][parameter]))
+
+                if parameter == "PRINT_PERMUTED_DATA":
+                    out_fd.write("PERMUTED_DATAFILE {0}.permutted.Rall\n\n".format(params.output_prefix))
 
 
 rule clumpp:
