@@ -90,7 +90,9 @@ rule convert_hipSTR_vcf:
         len_file=" -l {0} --amplicon_id_column_name {1} --amplicon_len_column_name {2} ".format(config["str_loci_len_file"],
                                                                                                 parameters["tool_options"]["convert_hipSTR_vcf"]["amplicon_id_column_name"],
                                                                                                 parameters["tool_options"]["convert_hipSTR_vcf"]["amplicon_len_column_name"],) if config["str_loci_len_file"] else "",
-        postprocessing=postprocess_allel_file_func
+        postprocessing=postprocess_allel_file_func,
+        add_population_column=" --add_population_column " if parameters["tool_options"]["structure"]["config_file_parameters"]["POPDATA"] == 1 else "",
+        pop_file=" --pop_file {0} ".format(config["pop_file"]) if config["pop_file"] else ""
     log:
         str=output_dict["log"] / "convert_hipSTR_vcf.{stage}.str.log",
         loci=output_dict["log"] / "convert_hipSTR_vcf.{stage}.loci.log",
@@ -107,5 +109,7 @@ rule convert_hipSTR_vcf:
     threads:
         parameters["threads"]["convert_hipSTR_vcf"]
     shell:
-         " convert_STR_vcf_to_allel_length.py -i {input.vcf} {params.len_file} 2>{log.loci} {params.postprocessing} > {output.loci_tab};"
-         " convert_STR_vcf_to_allel_length.py -i {input.vcf}  2>{log.str} {params.postprocessing} > {output.str_tab};"
+         " convert_STR_vcf_to_allel_length.py {params.add_population_column} {params.pop_file} --encode_ids "
+         " -i {input.vcf} {params.len_file} 2>{log.loci} {params.postprocessing} > {output.loci_tab};"
+         " convert_STR_vcf_to_allel_length.py {params.add_population_column} {params.pop_file} --encode_ids "
+         " -i {input.vcf}  2>{log.str} {params.postprocessing} > {output.str_tab};"

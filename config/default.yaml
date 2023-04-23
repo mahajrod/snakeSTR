@@ -217,7 +217,7 @@
 "flank_len":        1000                # length of flank to use for first step of alignment extraction
 "str_repeat_bed":   "str_repeat.bed"    # Bed file with coordinates and monomer info of the repeats within  str loci
 "str_loci_len_file": null
-"population_file": null # two column tab-separated file. First column should contain sample ids, second - population ids
+"pop_file": null # two column tab-separated file. First column should contain sample ids, second - population ids
 
 "absent_allel_alias": "-100"
 
