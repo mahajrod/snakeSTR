@@ -207,4 +207,4 @@ rule clumpp:
     threads:
         parameters["threads"]["clumpp"]
     shell:
-        "CLUMPP {input.config}  -i {input.clumpp_input} > {log.std} 2>&1"
+        "CLUMPP {input.config} > {log.std} 2>&1"
