@@ -108,10 +108,10 @@
                     - 5
                     - 6
                 "config_file_parameters":
-                    "BURNIN":                    100000
-                    "NUMREPS":                   1000000
+                    "BURNIN":                    1000
+                    "NUMREPS":                   10000
                     "LABEL":                     1
-                    "POPDATA":                   0
+                    "POPDATA":                   1
                     "POPFLAG":                   0
                     "LOCDATA":                   0
                     "PHENOTYPE":                 0
@@ -217,6 +217,7 @@
 "flank_len":        1000                # length of flank to use for first step of alignment extraction
 "str_repeat_bed":   "str_repeat.bed"    # Bed file with coordinates and monomer info of the repeats within  str loci
 "str_loci_len_file": null
+"population_file": null # two column tab-separated file. First column should contain sample ids, second - population ids
 
 "absent_allel_alias": "-100"
 

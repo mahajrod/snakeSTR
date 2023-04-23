@@ -66,6 +66,18 @@ rule filter_hipSTR:
          " --min-call-allele-bias {params.min_call_allele_bias} "
          " --min-call-strand-bias {params.min_call_strand_bias} | gzip -c > {output.vcf} 2>{log.std}"
 
+def postprocess_allel_file_func(wildcards):
+    if config["stage_coretools"]["admixture"] == "structure":
+        if parameters["tool_options"]["structure"]["config_file_parameters"]["POPDATA"] == 1:
+            return " | sed '1s/^[^\t]*\t[^\t]*\t//' " # remove labels of first and second columns from header for compatibility with STRUCTURE if POPDATA is 1
+        elif parameters["tool_options"]["structure"]["config_file_parameters"]["POPDATA"] == 0:
+            return " | sed '1s/^[^\t]*\t//' " # remove first column label from header for compatibility with STRUCTURE if POPDATA is 0
+        else:
+            raise ValueError("ERROR!!! Unrecognized value of POPDATA parameter (STRUCTURE config)!")
+    else:
+        return ""
+
+
 rule convert_hipSTR_vcf:
     priority: 1000
     input:
@@ -78,7 +90,7 @@ rule convert_hipSTR_vcf:
         len_file=" -l {0} --amplicon_id_column_name {1} --amplicon_len_column_name {2} ".format(config["str_loci_len_file"],
                                                                                                 parameters["tool_options"]["convert_hipSTR_vcf"]["amplicon_id_column_name"],
                                                                                                 parameters["tool_options"]["convert_hipSTR_vcf"]["amplicon_len_column_name"],) if config["str_loci_len_file"] else "",
-        postprocessing= " | sed '1s/^[^\t]*\t//' " if config["stage_coretools"]["admixture"] == "structure" else "" # remove first column label from header for compatibility with STRUCTURE
+        postprocessing=postprocess_allel_file_func
     log:
         str=output_dict["log"] / "convert_hipSTR_vcf.{stage}.str.log",
         loci=output_dict["log"] / "convert_hipSTR_vcf.{stage}.loci.log",
