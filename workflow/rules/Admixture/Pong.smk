@@ -86,7 +86,7 @@ rule generate_pong_script:
         parameters["threads"]["generate_pong_script"]
     run:
         with open(output.pong_script, "w") as out_fd:
-            out_fd.write("#!/usr/bin/env bash ")
+            out_fd.write("#!/usr/bin/env bash\n")
             out_fd.write("pong -c {0} -m {1} --ind2pop {2} --pop_names {3} -o {4} > {5} 2>&1\n".format(params.ignore_cols,
                                                                                                        input.filemap,
                                                                                                        input.ind2pop,
