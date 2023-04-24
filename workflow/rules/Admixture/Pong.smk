@@ -1,6 +1,6 @@
 import pandas as pd
 
-localrules: create_files_for_pong
+localrules: create_files_for_pong, generate_pong_script
 
 rule create_files_for_pong:
     priority: 1000
@@ -93,5 +93,5 @@ rule generate_pong_script:
                                                                                                        input.pop_names,
                                                                                                        params.out_dir,
                                                                                                        log.std))
-        shell("chmod +x output.pong_script")
+        shell("chmod +x {output.pong_script}")
 
