@@ -39,6 +39,7 @@ rule create_files_for_pong:
                                                                                                                                   str(out_dir_path)))
         #create ind2pop and pop_names files
         pop_df = pd.read_csv(input.pop_tab, sep="tsv", header=0, )
+        print(pop_df)
         if config["pop_file"]:
             pop_df[["pop_id"]].to_csv(output.ind2pop, sep="\t", header=False,index=False)
             pop_df[["pop_id", "pop_id"]].to_csv(output.pop_names,sep="\t",header=False,index=False)
