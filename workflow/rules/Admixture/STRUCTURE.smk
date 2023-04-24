@@ -198,7 +198,7 @@ rule clumpp:
         out=out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.output",
         permutted=expand(out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.permutted.R_{run}",
                          run=structure_run_id_list,
-                        allow_missing=True)
+                         allow_missing=True)
     log:
         std=output_dict["log"] / "clumpp.{stage}.{K}.log",
         cluster_log=output_dict["cluster_log"] / "clumpp.cluster.{stage}.{K}.log",

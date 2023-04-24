@@ -132,7 +132,9 @@ results_list = [out_dir_path / "str/hipSTR.filtered.vcf",
                       run=structure_run_id_list),
                 expand(out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.output",
                        stage=["raw", "filtered"],
-                       K=parameters["tool_options"]["structure"]["K_list"])]
+                       K=parameters["tool_options"]["structure"]["K_list"]),
+                expand(out_dir_path / "admixture/structure/{stage}/pong/",
+                       stage=["raw", "filtered"])]
 
 #---- Create output filelist ----
 
@@ -150,5 +152,6 @@ include: "workflow/rules/Alignment/Bazam.smk"
 include: "workflow/rules/Alignment/Alignment.smk"
 include: "workflow/rules/STR/HipSTR.smk"
 include: "workflow/rules/Admixture/STRUCTURE.smk"
+include: "workflow/rules/Admixture/Pong.smk"
 
 #----
