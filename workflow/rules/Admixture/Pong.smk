@@ -55,7 +55,6 @@ def detect_col_number_to_ignore(wildcards):
 rule pong:
     priority: 1000
     input:
-        q_table_list=rules.clumpp.output.permutted,
         filemap=rules.create_files_for_pong.output.filemap,
         ind2pop=rules.create_files_for_pong.output.ind2pop,
         pop_names=rules.create_files_for_pong.output.pop_names
