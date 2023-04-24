@@ -33,10 +33,15 @@ rule create_files_for_pong:
         with open(output.filemap, "w") as out_fd:
             for K in parameters["tool_options"]["structure"]["K_list"]:
                 for run in structure_run_id_list:
-                    out_fd.write("{0}_K{1}_R{2}\t{1}\t{3}/admixture/structure/{0}/structure.K{1}.clumpp.permutted.R_{2}\n".format(wildcards.stage,
-                                                                                                                                  K, 
-                                                                                                                                  run,
-                                                                                                                                  str(out_dir_path.absolute())))
+                    #out_fd.write("{0}_K{1}_R{2}\t{1}\t{3}/admixture/structure/{0}/structure.K{1}.clumpp.permutted.R_{2}\n".format(wildcards.stage,
+                    #                                                                                                              K,
+                    #                                                                                                              run,
+                    #                                                                                                              str(out_dir_path.absolute())))
+                    out_fd.write("{0}_K{1}_R{2}\t{1}\tstructure.K{1}.clumpp.permutted.R_{2}\n".format(wildcards.stage,
+                                                                                                     K,
+                                                                                                     run,
+                                                                                                     ))
+
         #create ind2pop and pop_names files
         pop_df = pd.read_csv(input.pop_tab, sep="\t", header=0, )
         #print(pop_df)
@@ -53,31 +58,40 @@ def detect_col_number_to_ignore(wildcards):
     elif config["stage_coretools"]["admixture"] == "admixture":
         return 0
 
-rule pong:
+rule generate_pong_script:
     priority: 1000
     input:
         filemap=rules.create_files_for_pong.output.filemap,
         ind2pop=rules.create_files_for_pong.output.ind2pop,
         pop_names=rules.create_files_for_pong.output.pop_names
     output:
-        dir=out_dir_path / "admixture/structure/{stage}/pong/"
+        #dir=out_dir_path / "admixture/structure/{stage}/pong/",
+        pong_script=out_dir_path / "admixture/structure/{stage}/pong.sh"
     params:
-        ignore_cols=detect_col_number_to_ignore
+        ignore_cols=detect_col_number_to_ignore,
+        out_dir=lambda wildcards: out_dir_path / "admixture/structure/{0}/pong/".format(wildcards.stage)
     log:
-        std=output_dict["log"] / "pong.{stage}.log",
-        cluster_log=output_dict["cluster_log"] / "pong.cluster.{stage}.log",
-        cluster_err=output_dict["cluster_error"] / "pong.cluster.{stage}.err",
+        std=output_dict["log"] / "generate_pong_script.{stage}.log",
+        cluster_log=output_dict["cluster_log"] / "generate_pong_script.cluster.{stage}.log",
+        cluster_err=output_dict["cluster_error"] / "generate_pong_script.cluster.{stage}.err",
     benchmark:
-        output_dict["benchmark"] / "pong.benchmark.{stage}.txt"
-    conda:
-        config["conda"]["common"]["name"] if config["use_existing_envs"] else ("../../../%s" % config["conda"]["common"]["yaml"])
+        output_dict["benchmark"] / "generate_pong_script.benchmark.{stage}.txt"
+    #conda:
+    #    config["conda"]["common"]["name"] if config["use_existing_envs"] else ("../../../%s" % config["conda"]["common"]["yaml"])
     resources:
-        cpus=parameters["threads"]["pong"],
-        time=parameters["time"]["pong"],
-        mem=parameters["memory_mb"]["pong"],
+        cpus=parameters["threads"]["generate_pong_script"],
+        time=parameters["time"]["generate_pong_script"],
+        mem=parameters["memory_mb"]["generate_pong_script"],
     threads:
-        parameters["threads"]["pong"]
-    shell:
-        " pong -c {params.ignore_cols} -m {input.filemap} --ind2pop {input.ind2pop} --pop_names {input.pop_names} "
-        " -o {output.dir} > {log.std} 2>&1"
+        parameters["threads"]["generate_pong_script"]
+    run:
+        with open(output.pong_script, "w") as out_fd:
+            out_fd.write("#!/usr/bin/env bash ")
+            out_fd.write("pong -c {0} -m {1} --ind2pop {2} --pop_names {3} -o {4} > {5} 2>&1\n".format(params.ignore_cols,
+                                                                                                       input.filemap,
+                                                                                                       input.ind2pop,
+                                                                                                       input.pop_names,
+                                                                                                       params.out_dir,
+                                                                                                       log.std))
+        shell("chmod +x output.pong_script")
 

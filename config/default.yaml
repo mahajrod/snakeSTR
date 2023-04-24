@@ -54,8 +54,8 @@
             "prepare_clumpp_input":           1
             "generate_config_for_clumpp":     1
             "clumpp":                         1
-            "pong":                           2
-            "create_files_for_pong":        1
+            "generate_pong_script":           2
+            "create_files_for_pong":          1
 
         "memory_mb":
             "extract_alignments":               1000
@@ -73,8 +73,8 @@
             "prepare_clumpp_input":             100
             "generate_config_for_clumpp":       100
             "clumpp":                           3000
-            "pong":                             3000
-            "create_files_for_pong":          100
+            "generate_pong_script":             3000
+            "create_files_for_pong":            100
 
         "time": #qTODO: adjust
             "extract_alignments":               "00:05:00"
@@ -91,8 +91,8 @@
             "prepare_clumpp_input":             "00:05:00"
             "generate_config_for_clumpp":       "00:05:00"
             "clumpp":                           "02:00:00"
-            "pong":                             "02:00:00"
-            "create_files_for_pong":          "00:05:00"
+            "generate_pong_script":             "02:00:00"
+            "create_files_for_pong":            "00:05:00"
 
         "tool_options":
             "hipSTR":

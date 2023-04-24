@@ -133,7 +133,7 @@ results_list = [out_dir_path / "str/hipSTR.filtered.vcf",
                 expand(out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.output",
                        stage=["raw", "filtered"],
                        K=parameters["tool_options"]["structure"]["K_list"]),
-                expand(out_dir_path / "admixture/structure/{stage}/pong/",
+                expand(out_dir_path / "admixture/structure/{stage}/pong.sh",
                        stage=["raw", "filtered"])]
 
 #---- Create output filelist ----
