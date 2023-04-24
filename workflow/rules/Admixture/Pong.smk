@@ -5,7 +5,10 @@ localrules: create_files_for_pong
 rule create_files_for_pong:
     priority: 1000
     input:
-        q_table_list=rules.clumpp.output.permutted,
+        q_table_list=expand(out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.permutted.R_{run}",
+                         run=structure_run_id_list,
+                         K=parameters["tool_options"]["structure"]["K_list"],
+                         allow_missing=True)
         pop_tab=rules.convert_hipSTR_vcf.output.pop_tab
     output:
         filemap=out_dir_path / "admixture/structure/{stage}/pong.filemap",
