@@ -88,9 +88,9 @@ rule generate_pong_script:
         with open(output.pong_script, "w") as out_fd:
             out_fd.write("#!/usr/bin/env bash\n")
             out_fd.write("pong -c {0} -m {1} --ind2pop {2} --pop_names {3} -o {4} \n".format(params.ignore_cols,
-                                                                                             input.filemap,
-                                                                                             input.ind2pop,
-                                                                                             input.pop_names,
-                                                                                             params.out_dir))
+                                                                                             Path(input.filemap).name,
+                                                                                             Path(input.ind2pop).name,
+                                                                                             Path(input.pop_names).name,
+                                                                                             Path(params.out_dir).name))
         shell("chmod +x {output.pong_script}")
 
