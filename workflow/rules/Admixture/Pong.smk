@@ -33,7 +33,7 @@ rule create_files_for_pong:
         with open(output.filemap, "w") as out_fd:
             for K in parameters["tool_options"]["structure"]["K_list"]:
                 for run in structure_run_id_list:
-                    out_fd.write("{0}.K{1}.R{2}\t{1}\t{3}/admixture/structure/{0}/structure.K{1}.clumpp.permutted.R_{2}\n".format(wildcards.stage, 
+                    out_fd.write("{0}_K{1}_R{2}\t{1}\t{3}/admixture/structure/{0}/structure.K{1}.clumpp.permutted.R_{2}\n".format(wildcards.stage,
                                                                                                                                   K, 
                                                                                                                                   run,
                                                                                                                                   str(out_dir_path.absolute())))
