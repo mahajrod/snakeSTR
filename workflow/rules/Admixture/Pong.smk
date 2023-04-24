@@ -87,11 +87,10 @@ rule generate_pong_script:
     run:
         with open(output.pong_script, "w") as out_fd:
             out_fd.write("#!/usr/bin/env bash\n")
-            out_fd.write("pong -c {0} -m {1} --ind2pop {2} --pop_names {3} -o {4} > {5} 2>&1\n".format(params.ignore_cols,
-                                                                                                       input.filemap,
-                                                                                                       input.ind2pop,
-                                                                                                       input.pop_names,
-                                                                                                       params.out_dir,
-                                                                                                       log.std))
+            out_fd.write("pong -c {0} -m {1} --ind2pop {2} --pop_names {3} -o {4} \n".format(params.ignore_cols,
+                                                                                             input.filemap,
+                                                                                             input.ind2pop,
+                                                                                             input.pop_names,
+                                                                                             params.out_dir))
         shell("chmod +x {output.pong_script}")
 
