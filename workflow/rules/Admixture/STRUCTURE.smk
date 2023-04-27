@@ -3,19 +3,21 @@ localrules: generate_config_for_structure, extract_q_table, prepare_clumpp_input
 rule generate_config_for_structure:
     priority: 1000
     input:
-        loci_tab=out_dir_path / "str/hipSTR.allels.{stage}.loci.tab"
+        #loci_tab=out_dir_path / "str/hipSTR.allels.{stage}.loci.tab"
+        loci_tab=out_dir_path / "str/hipSTR.allels.{stage}.{loci_subset}.loci.postprocessed.tab"
     output:
-        config=out_dir_path / "admixture/structure/{stage}/structure.K{K}.R{run}.config",
-        extra_config=out_dir_path / "admixture/structure/{stage}/structure.K{K}.R{run}.config.extra"
+        config=out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.R{run}.config",
+        extra_config=out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.R{run}.config.extra"
     params:
-        output_prefix=lambda wildcards: out_dir_path / "admixture/structure/{0}/structure.K{1}.R{2}".format(wildcards.stage,
-                                                                                                           wildcards.K,
-                                                                                                           wildcards.run)
+        output_prefix=lambda wildcards: out_dir_path / "admixture/structure/{0}/{1}/structure.{1}.K{2}.R{3}".format(wildcards.stage,
+                                                                                                                    wildcards.loci_subset,
+                                                                                                                    wildcards.K,
+                                                                                                                    wildcards.run)
     log:
-        cluster_log=output_dict["cluster_log"] / "generate_config_for_structure:.cluster.{stage}.{K}.{run}.log",
-        cluster_err=output_dict["cluster_error"] / "generate_config_for_structure:.cluster.{stage}.{K}.{run}.err",
+        cluster_log=output_dict["cluster_log"] / "generate_config_for_structure:.cluster.{stage}.{loci_subset}.{K}.{run}.log",
+        cluster_err=output_dict["cluster_error"] / "generate_config_for_structure:.cluster.{stage}.{loci_subset}.{K}.{run}.err",
     benchmark:
-        output_dict["benchmark"] / "generate_config_for_structure:.benchmark.{stage}.{K}.{run}.txt"
+        output_dict["benchmark"] / "generate_config_for_structure:.benchmark.{stage}.{loci_subset}.{K}.{run}.txt"
     #conda:
     #    config["conda"]["common"]["name"] if config["use_existing_envs"] else ("../../../%s" % config["conda"]["common"]["yaml"])
     resources:
@@ -54,24 +56,26 @@ rule generate_config_for_structure:
 rule structure:
     priority: 1000
     input:
-        loci_tab=out_dir_path / "str/hipSTR.allels.{stage}.loci.tab",
+        #loci_tab=out_dir_path / "str/hipSTR.allels.{stage}.loci.tab",
+        loci_tab = out_dir_path / "str/hipSTR.allels.{stage}.{loci_subset}.loci.postprocessed.tab",
         config=rules.generate_config_for_structure.output.config,
         extra_config=rules.generate_config_for_structure.output.extra_config
     output:
-        res=out_dir_path / "admixture/structure/{stage}/structure.K{K}.R{run}_f",
+        res=out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.R{run}_f",
 
     params:
-        output_prefix=lambda wildcards: out_dir_path / "admixture/structure/{0}/structure.K{1}.R{2}".format(wildcards.stage,
-                                                                                                           wildcards.K,
-                                                                                                           wildcards.run),
+        output_prefix=lambda wildcards: out_dir_path / "admixture/structure/{0}/{1}/structure.{1}.K{2}.R{3}".format(wildcards.stage,
+                                                                                                                    wildcards.loci_subset,
+                                                                                                                    wildcards.K,
+                                                                                                                    wildcards.run),
         #extraparams_file=parameters["tool_options"]["structure"]["extraparams_file"]
     log:
-        std=output_dict["log"] / "structure.{stage}.{K}.{run}.log",
-        err=output_dict["log"] / "structure.{stage}.{K}.{run}.err",
-        cluster_log=output_dict["cluster_log"] / "structure.cluster.{stage}.{K}.{run}.log",
-        cluster_err=output_dict["cluster_error"] / "structure.cluster.{stage}.{K}.{run}.err",
+        std=output_dict["log"] / "structure.{stage}.{loci_subset}.{K}.{run}.log",
+        err=output_dict["log"] / "structure.{stage}.{loci_subset}.{K}.{run}.err",
+        cluster_log=output_dict["cluster_log"] / "structure.cluster.{stage}.{loci_subset}.{K}.{run}.log",
+        cluster_err=output_dict["cluster_error"] / "structure.cluster.{stage}.{loci_subset}.{K}.{run}.err",
     benchmark:
-        output_dict["benchmark"] / "structure.benchmark.{stage}.{K}.{run}.txt"
+        output_dict["benchmark"] / "structure.benchmark.{stage}.{loci_subset}.{K}.{run}.txt"
     conda:
         config["conda"]["common"]["name"] if config["use_existing_envs"] else ("../../../%s" % config["conda"]["common"]["yaml"])
     resources:
@@ -91,13 +95,13 @@ rule extract_q_table:
     input:
         structure_output=rules.structure.output.res
     output:
-        res=out_dir_path / "admixture/structure/{stage}/structure.K{K}.R{run}.Q.clumpp",
+        res=out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.R{run}.Q.clumpp",
     log:
-        std=output_dict["log"] / "extract_q_table.{stage}.{K}.{run}.log",
-        cluster_log=output_dict["cluster_log"] / "extract_q_table.cluster.{stage}.{K}.{run}.log",
-        cluster_err=output_dict["cluster_error"] / "extract_q_table.cluster.{stage}.{K}.{run}.err",
+        std=output_dict["log"] / "extract_q_table.{stage}.{loci_subset}.{K}.{run}.log",
+        cluster_log=output_dict["cluster_log"] / "extract_q_table.cluster.{stage}.{loci_subset}.{K}.{run}.log",
+        cluster_err=output_dict["cluster_error"] / "extract_q_table.cluster.{stage}.{loci_subset}.{K}.{run}.err",
     benchmark:
-        output_dict["benchmark"] / "extract_q_table.benchmark.{stage}.{K}.{run}.txt"
+        output_dict["benchmark"] / "extract_q_table.benchmark.{stage}.{loci_subset}.{K}.{run}.txt"
     conda:
         config["conda"]["common"]["name"] if config["use_existing_envs"] else ("../../../%s" % config["conda"]["common"]["yaml"])
     resources:
@@ -115,13 +119,13 @@ rule prepare_clumpp_input:
     input:
         structure_output=expand(rules.extract_q_table.output.res, run=structure_run_id_list, allow_missing=True)
     output:
-        res=out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.input",
+        res=out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.clumpp.input",
     log:
-        std=output_dict["log"] / "prepare_clumpp_input.{stage}.{K}.log",
-        cluster_log=output_dict["cluster_log"] / "prepare_clumpp_input.cluster.{stage}.{K}.log",
-        cluster_err=output_dict["cluster_error"] / "prepare_clumpp_input.cluster.{stage}.{K}.err",
+        std=output_dict["log"] / "prepare_clumpp_input.{stage}.{loci_subset}.{K}.log",
+        cluster_log=output_dict["cluster_log"] / "prepare_clumpp_input.cluster.{stage}.{loci_subset}.{K}.log",
+        cluster_err=output_dict["cluster_error"] / "prepare_clumpp_input.cluster.{stage}.{loci_subset}.{K}.err",
     benchmark:
-        output_dict["benchmark"] / "prepare_clumpp_input.benchmark.{stage}.{K}.txt"
+        output_dict["benchmark"] / "prepare_clumpp_input.benchmark.{stage}.{loci_subset}.{K}.txt"
     conda:
         config["conda"]["common"]["name"] if config["use_existing_envs"] else ("../../../%s" % config["conda"]["common"]["yaml"])
     resources:
@@ -138,19 +142,20 @@ rule prepare_clumpp_input:
 rule generate_config_for_clumpp:
     priority: 1000
     input:
-        loci_tab=out_dir_path / "str/hipSTR.allels.{stage}.loci.tab",
-        clumpp_input=out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.input"
+        loci_tab=out_dir_path / "str/hipSTR.allels.{stage}.{loci_subset}.loci.postprocessed.tab",
+        clumpp_input=out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.clumpp.input"
     output:
-        config=out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.config",
+        config=out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.clumpp.config",
     params:
-        output_prefix=lambda wildcards: out_dir_path / "admixture/structure/{0}/structure.K{1}.clumpp".format(wildcards.stage,
-                                                                                                              wildcards.K,),
+        output_prefix=lambda wildcards: out_dir_path / "admixture/structure/{0}/{1}/structure.{1}.K{2}.clumpp".format(wildcards.stage,
+                                                                                                                     wildcards.loci_subset,
+                                                                                                                     wildcards.K,),
         #number_of_runs=len(structure_run_id_list)
     log:
-        cluster_log=output_dict["cluster_log"] / "generate_config_for_clumpp.cluster.{stage}.{K}.log",
-        cluster_err=output_dict["cluster_error"] / "generate_config_for_clumpp.cluster.{stage}.{K}.err",
+        cluster_log=output_dict["cluster_log"] / "generate_config_for_clumpp.cluster.{stage}.{loci_subset}.{K}.log",
+        cluster_err=output_dict["cluster_error"] / "generate_config_for_clumpp.cluster.{stage}.{loci_subset}.{K}.err",
     benchmark:
-        output_dict["benchmark"] / "generate_config_for_clumpp.benchmark.{stage}.{K}.txt"
+        output_dict["benchmark"] / "generate_config_for_clumpp.benchmark.{stage}.{loci_subset}.{K}.txt"
     #conda:
     #    config["conda"]["common"]["name"] if config["use_existing_envs"] else ("../../../%s" % config["conda"]["common"]["yaml"])
     resources:
@@ -191,20 +196,20 @@ rule generate_config_for_clumpp:
 rule clumpp:
     priority: 1000
     input:
-        loci_tab=out_dir_path / "str/hipSTR.allels.{stage}.loci.tab",
-        clumpp_input=out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.input",
-        config=out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.config"
+        loci_tab=out_dir_path / "str/hipSTR.allels.{stage}.{loci_subset}.loci.postprocessed.tab",
+        clumpp_input=out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.clumpp.input",
+        config=out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.clumpp.config"
     output:
-        out=out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.output",
-        permutted=expand(out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.permutted.R_{run}",
+        out=out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.clumpp.output",
+        permutted=expand(out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.clumpp.permutted.R_{run}",
                          run=structure_run_id_list,
                          allow_missing=True)
     log:
-        std=output_dict["log"] / "clumpp.{stage}.{K}.log",
-        cluster_log=output_dict["cluster_log"] / "clumpp.cluster.{stage}.{K}.log",
-        cluster_err=output_dict["cluster_error"] / "clumpp.cluster.{stage}.{K}.err",
+        std=output_dict["log"] / "clumpp.{stage}.{loci_subset}.{K}.log",
+        cluster_log=output_dict["cluster_log"] / "clumpp.cluster.{stage}.{loci_subset}.{K}.log",
+        cluster_err=output_dict["cluster_error"] / "clumpp.cluster.{stage}.{loci_subset}.{K}.err",
     benchmark:
-        output_dict["benchmark"] / "clumpp.benchmark.{stage}.{K}.txt"
+        output_dict["benchmark"] / "clumpp.benchmark.{stage}.{loci_subset}.{K}.txt"
     #conda:
     #    config["conda"]["common"]["name"] if config["use_existing_envs"] else ("../../../%s" % config["conda"]["common"]["yaml"])
     resources:

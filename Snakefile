@@ -111,7 +111,22 @@ if not reference_path.exists():  # check if file is located in the input_folder
 #---- Initialize tool parameters ----
 parameters = config["parameters"][config["parameter_set"]] # short alias for used set of parameters
 
+#---- Parse loci file ----
+loci_df = pd.read_csv(config["str_loci_bed"], sep="\t", header=0, index_col="primer_pair")
+#-------------------------
 
+#---- Parse loci set fam file ----
+loci_set_fam_file_path = Path(config["loci_set_fam_file"])
+loci_set_dict = OrderedDict()
+
+if loci_set_fam_file_path.exists():
+    with open(loci_set_fam_file_path, "r") as in_fd:
+        for line in in_fd:
+            set_id, loci = line.strip().split("\t")
+            loci_set_dict[set_id] = list(set(loci.split(",")))
+else:
+    loci_set_dict["all"] = list(loci_df.index)
+#---------------------------------
 
 #---- Save configuration and input files ----
 final_config_yaml = out_dir_path / "config/config.final.yaml"
@@ -123,18 +138,21 @@ with open(final_config_yaml, 'w') as final_config_fd:
 
 #-------------------------------------------
 localrules: all
+
 structure_run_id_list = range(1, parameters["tool_options"]["structure"]["number_of_runs"] + 1)
+loci_set_list = list(loci_set_dict.keys())
 
 results_list = [out_dir_path / "str/hipSTR.filtered.vcf",
-                expand(out_dir_path / "admixture/structure/{stage}/structure.K{K}.R{run}_f",
-                      stage=["raw", "filtered"],
-                      K=parameters["tool_options"]["structure"]["K_list"],
-                      run=structure_run_id_list),
-                expand(out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.output",
+                #expand(out_dir_path / "admixture/structure/{stage}/structure.K{K}.R{run}_f",
+                #      stage=["raw", "filtered"],
+                #      K=parameters["tool_options"]["structure"]["K_list"],
+                #      run=structure_run_id_list),
+                #expand(out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.output",
+                #       stage=["raw", "filtered"],
+                #       K=parameters["tool_options"]["structure"]["K_list"]),
+                expand(out_dir_path / "admixture/structure/{stage}/{loci_subset}/pong.sh",
                        stage=["raw", "filtered"],
-                       K=parameters["tool_options"]["structure"]["K_list"]),
-                expand(out_dir_path / "admixture/structure/{stage}/pong.sh",
-                       stage=["raw", "filtered"])]
+                       loci_subset=loci_set_list )]
 
 #---- Create output filelist ----
 

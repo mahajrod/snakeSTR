@@ -1,3 +1,7 @@
+import pandas
+import pandas as pd
+
+localrules: extract_loci_sets
 
 rule hipSTR:
     priority: 1000
@@ -84,14 +88,14 @@ rule convert_hipSTR_vcf:
         vcf=out_dir_path / "str/hipSTR.{stage}.vcf.gz"
     output:
         str_tab=out_dir_path / "str/hipSTR.allels.{stage}.str.tab",
-        loci_tab=out_dir_path / "str/hipSTR.allels.{stage}.loci.tab",
+        loci_tab=out_dir_path / "str/hipSTR.allels.{stage}.loci.tab", # <---
         pop_tab=out_dir_path / "str/hipSTR.allels.{stage}.pop.tab"
     params:
         absent_allel_alias=config["absent_allel_alias"],
         len_file=" -l {0} --amplicon_id_column_name {1} --amplicon_len_column_name {2} ".format(config["str_loci_len_file"],
                                                                                                 parameters["tool_options"]["convert_hipSTR_vcf"]["amplicon_id_column_name"],
                                                                                                 parameters["tool_options"]["convert_hipSTR_vcf"]["amplicon_len_column_name"],) if config["str_loci_len_file"] else "",
-        postprocessing=postprocess_allel_file_func,
+        #postprocessing=postprocess_allel_file_func,
         add_population_column=" --add_population_column " if parameters["tool_options"]["structure"]["config_file_parameters"]["POPDATA"] == 1 else "",
         pop_file=" --pop_file {0} ".format(config["pop_file"]) if config["pop_file"] else ""
     log:
@@ -112,6 +116,48 @@ rule convert_hipSTR_vcf:
     shell:
          " convert_STR_vcf_to_allel_length.py {params.add_population_column} {params.pop_file} --encode_ids "
          " --pop_df_file {output.pop_tab} "
-         " -i {input.vcf} {params.len_file} 2>{log.loci} {params.postprocessing} > {output.loci_tab};"
+         " -i {input.vcf} {params.len_file} 2>{log.loci} > {output.loci_tab};" # {params.postprocessing} 
          " convert_STR_vcf_to_allel_length.py {params.add_population_column} {params.pop_file} --encode_ids "
-         " -i {input.vcf}  2>{log.str} {params.postprocessing} > {output.str_tab};"
+         " -i {input.vcf}  2>{log.str}  > {output.str_tab};" #{params.postprocessing}
+
+rule extract_loci_sets:
+    priority: 1000
+    input:
+        loci_tab=rules.convert_hipSTR_vcf.output.loci_tab
+    output:
+        subset_loci_tab=expand(out_dir_path / "str/hipSTR.allels.{stage}.{loci_subset}.loci.tab",
+                               loci_subset=loci_set_list,
+                               allow_missing=True),
+        subset_loci_tab_postprocessed=expand(out_dir_path / "str/hipSTR.allels.{stage}.{loci_subset}.loci.postprocessed.tab",
+                                             loci_subset=loci_set_list,
+                                             allow_missing=True)
+    params:
+        delete_header_columns= 0 if config["stage_coretools"]["admixture"] != "structure" else 2 if parameters["tool_options"]["structure"]["config_file_parameters"]["POPDATA"] == 1 else 1,
+        index_cols = (0, 1) if parameters["tool_options"]["structure"]["config_file_parameters"]["POPDATA"] == 1 else 0
+    log:
+        std=output_dict["log"] / "extract_loci_sets.{stage}.log",
+        cluster_log=output_dict["cluster_log"] / "extract_loci_sets.{stage}.cluster.log",
+        cluster_err=output_dict["cluster_error"] / "extract_loci_sets{stage}.cluster.err",
+    benchmark:
+        output_dict["benchmark"] / "extract_loci_sets.{stage}.benchmark.txt"
+    #conda:
+    #    config["conda"]["common"]["name"] if config["use_existing_envs"] else ("../../../%s" % config["conda"]["common"]["yaml"])
+    resources:
+        cpus=parameters["threads"]["extract_loci_sets"],
+        time=parameters["time"]["extract_loci_sets"],
+        mem=parameters["memory_mb"]["extract_loci_sets"],
+    threads:
+        parameters["threads"]["extract_loci_sets"]
+    run:
+        all_loci_df = pd.read_csv(input.loci_tab, sep="\t", header=0, index_col=params.index_cols)
+        for loci_set_id in loci_set_dict:
+            out_file_path = out_dir_path / "str/hipSTR.allels.{0}.loci.{1}.tab".format(wildcards.stage,
+                                                                                       loci_set_id)
+            out_file_post_processed_path = out_dir_path / "str/hipSTR.allels.{0}.loci.{1}.postprocessed.tab".format(wildcards.stage,
+                loci_set_id)
+            all_loci_df[loci_set_dict[loci_set_id]].to_csv(str(out_file_path), sep="\t", index=True, header=True)
+
+            with open(out_file_path, "r") as in_fd, open(out_file_post_processed_path, "w") as out_fd:
+                out_fd.write("\t".join(in_fd.readline().split("\t")[params.delete_header_columns:]))
+                for line in in_fd:
+                    out_fd.write(line)

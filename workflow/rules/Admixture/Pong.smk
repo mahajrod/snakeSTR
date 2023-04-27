@@ -5,21 +5,21 @@ localrules: create_files_for_pong, generate_pong_script
 rule create_files_for_pong:
     priority: 1000
     input:
-        q_table_list=expand(out_dir_path / "admixture/structure/{stage}/structure.K{K}.clumpp.permutted.R_{run}",
+        q_table_list=expand(out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.clumpp.permutted.R_{run}",
                          run=structure_run_id_list,
                          K=parameters["tool_options"]["structure"]["K_list"],
                          allow_missing=True),
         pop_tab=rules.convert_hipSTR_vcf.output.pop_tab
     output:
-        filemap=out_dir_path / "admixture/structure/{stage}/pong.filemap",
-        ind2pop=out_dir_path / "admixture/structure/{stage}/pong.ind2pop",
-        pop_names=out_dir_path / "admixture/structure/{stage}/pong.pop_names"
+        filemap=out_dir_path / "admixture/structure/{stage}/{loci_subset}/pong.filemap",
+        ind2pop=out_dir_path / "admixture/structure/{stage}/{loci_subset}/pong.ind2pop",
+        pop_names=out_dir_path / "admixture/structure/{stage}/{loci_subset}/pong.pop_names"
     log:
-        std=output_dict["log"] / "create_files_for_pong.{stage}.log",
-        cluster_log=output_dict["cluster_log"] / "create_files_for_pong.cluster.{stage}.log",
-        cluster_err=output_dict["cluster_error"] / "create_files_for_pong.cluster.{stage}.err",
+        std=output_dict["log"] / "create_files_for_pong.{stage}.{loci_subset}.log",
+        cluster_log=output_dict["cluster_log"] / "create_files_for_pong.cluster.{stage}.{loci_subset}.log",
+        cluster_err=output_dict["cluster_error"] / "create_files_for_pong.cluster.{stage}.{loci_subset}.err",
     benchmark:
-        output_dict["benchmark"] / "create_files_for_pong.benchmark.{stage}.txt"
+        output_dict["benchmark"] / "create_files_for_pong.benchmark.{stage}.{loci_subset}.txt"
     #conda:
     #    config["conda"]["common"]["name"] if config["use_existing_envs"] else ("../../../%s" % config["conda"]["common"]["yaml"])
     resources:
@@ -37,10 +37,11 @@ rule create_files_for_pong:
                     #                                                                                                              K,
                     #                                                                                                              run,
                     #                                                                                                              str(out_dir_path.absolute())))
-                    out_fd.write("{0}_K{1}_R{2}\t{1}\tstructure.K{1}.clumpp.permutted.R_{2}\n".format(wildcards.stage,
-                                                                                                     K,
-                                                                                                     run,
-                                                                                                     ))
+                    out_fd.write("{0}_K{1}_R{2}\t{1}\tstructure.{3}.K{1}.clumpp.permutted.R_{2}\n".format(wildcards.stage,
+                                                                                                          K,
+                                                                                                          run,
+                                                                                                          wildcards.loci_subset
+                                                                                                          ))
 
         #create ind2pop and pop_names files
         pop_df = pd.read_csv(input.pop_tab, sep="\t", header=0, )
@@ -66,16 +67,16 @@ rule generate_pong_script:
         pop_names=rules.create_files_for_pong.output.pop_names
     output:
         #dir=out_dir_path / "admixture/structure/{stage}/pong/",
-        pong_script=out_dir_path / "admixture/structure/{stage}/pong.sh"
+        pong_script=out_dir_path / "admixture/structure/{stage}/{loci_subset}/pong.sh"
     params:
         ignore_cols=detect_col_number_to_ignore,
-        out_dir=lambda wildcards: out_dir_path / "admixture/structure/{0}/pong/".format(wildcards.stage)
+        out_dir=lambda wildcards: out_dir_path / "admixture/structure/{0}/{1}pong/".format(wildcards.stage, wildcards.loci_subset)
     log:
-        std=output_dict["log"] / "generate_pong_script.{stage}.log",
-        cluster_log=output_dict["cluster_log"] / "generate_pong_script.cluster.{stage}.log",
-        cluster_err=output_dict["cluster_error"] / "generate_pong_script.cluster.{stage}.err",
+        std=output_dict["log"] / "generate_pong_script.{stage}.{loci_subset}.log",
+        cluster_log=output_dict["cluster_log"] / "generate_pong_script.cluster.{stage}.{loci_subset}.log",
+        cluster_err=output_dict["cluster_error"] / "generate_pong_script.cluster.{stage}.{loci_subset}.err",
     benchmark:
-        output_dict["benchmark"] / "generate_pong_script.benchmark.{stage}.txt"
+        output_dict["benchmark"] / "generate_pong_script.benchmark.{stage}.{loci_subset}.txt"
     #conda:
     #    config["conda"]["common"]["name"] if config["use_existing_envs"] else ("../../../%s" % config["conda"]["common"]["yaml"])
     resources:
