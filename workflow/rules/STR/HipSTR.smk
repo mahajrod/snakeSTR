@@ -151,9 +151,9 @@ rule extract_loci_sets:
     run:
         all_loci_df = pd.read_csv(input.loci_tab, sep="\t", header=0, index_col=params.index_cols)
         for loci_set_id in loci_set_dict:
-            out_file_path = out_dir_path / "str/hipSTR.allels.{0}.loci.{1}.tab".format(wildcards.stage,
+            out_file_path = out_dir_path / "str/hipSTR.allels.{0}.{1}.loci.tab".format(wildcards.stage,
                                                                                        loci_set_id)
-            out_file_post_processed_path = out_dir_path / "str/hipSTR.allels.{0}.loci.{1}.postprocessed.tab".format(wildcards.stage,
+            out_file_post_processed_path = out_dir_path / "str/hipSTR.allels.{0}.{1}.loci.postprocessed.tab".format(wildcards.stage,
                 loci_set_id)
             all_loci_df[loci_set_dict[loci_set_id]].to_csv(str(out_file_path), sep="\t", index=True, header=True)
 
