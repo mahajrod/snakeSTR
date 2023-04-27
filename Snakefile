@@ -112,7 +112,7 @@ if not reference_path.exists():  # check if file is located in the input_folder
 parameters = config["parameters"][config["parameter_set"]] # short alias for used set of parameters
 
 #---- Parse loci file ----
-loci_df = pd.read_csv(config["str_loci_bed"], sep="\t", header=0, index_col="primer_pair")
+loci_df = pd.read_csv(str_loci_bed_path, sep="\t", header=0, index_col="primer_pair")
 #-------------------------
 
 #---- Parse loci set fam file ----
