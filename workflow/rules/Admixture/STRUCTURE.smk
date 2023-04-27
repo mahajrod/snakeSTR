@@ -147,9 +147,12 @@ rule generate_config_for_clumpp:
     output:
         config=out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.clumpp.config",
     params:
-        output_prefix=lambda wildcards: out_dir_path / "admixture/structure/{0}/{1}/structure.{1}.K{2}.clumpp".format(wildcards.stage,
-                                                                                                                     wildcards.loci_subset,
-                                                                                                                     wildcards.K,),
+        workdir=lambda wildcards: out_dir_path / "admixture/structure/{0}/{1}/".format(wildcards.stage, wildcards.loci_subset),
+        output_prefix=lambda wildcards: "structure.{0}.K{1}.clumpp".format(wildcards.loci_subset,
+                                                                           wildcards.K,),
+        #output_prefix=lambda wildcards: out_dir_path / "admixture/structure/{0}/{1}/structure.{1}.K{2}.clumpp".format(wildcards.stage,
+        #                                                                                                             wildcards.loci_subset,
+        #                                                                                                             wildcards.K,),
         #number_of_runs=len(structure_run_id_list)
     log:
         cluster_log=output_dict["cluster_log"] / "generate_config_for_clumpp.cluster.{stage}.{loci_subset}.{K}.log",
@@ -164,7 +167,9 @@ rule generate_config_for_clumpp:
         mem=parameters["memory_mb"]["generate_config_for_clumpp"],
     threads:
         parameters["threads"]["generate_config_for_clumpp"]
-    run:
+    run: # local names are used in config as CLUMPP can't deal with paths longer 50 characters
+        shell("cp {0} {1}".format(input.loci_tab, params.workdir))
+
         with open(input.loci_tab, "r") as in_fd:
             number_of_loci = len(in_fd.readline().split("\t"))
             number_of_individuals = 0
@@ -176,7 +181,7 @@ rule generate_config_for_clumpp:
 
         with open(output.config, "w") as out_fd:
             out_fd.write("DATATYPE {0}\n\n".format(parameters["tool_options"]["clumpp"]["config_file_parameters"]["DATATYPE"])) # This parameter must be in the very beginning of the config file. Otherwise INDFILE will not be parsed correctly.
-            out_fd.write("INDFILE {0}\n\n".format(input.clumpp_input))
+            out_fd.write("INDFILE {0}\n\n".format(str(Path(input.clumpp_input).name)))
             out_fd.write("OUTFILE {0}.output\n\n".format(params.output_prefix))
             out_fd.write("MISCFILE {0}.miscfile\n\n".format(params.output_prefix))
 
@@ -198,7 +203,8 @@ rule clumpp:
     input:
         loci_tab=out_dir_path / "str/hipSTR.allels.{stage}.{loci_subset}.loci.postprocessed.tab",
         clumpp_input=out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.clumpp.input",
-        config=out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.clumpp.config"
+        config=out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.clumpp.config",
+        workdir=out_dir_path / "admixture/structure/{stage}/{loci_subset}/",
     output:
         out=out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.clumpp.output",
         permutted=expand(out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.clumpp.permutted.R_{run}",
@@ -219,4 +225,5 @@ rule clumpp:
     threads:
         parameters["threads"]["clumpp"]
     shell:
-        "CLUMPP {input.config} > {log.std} 2>&1"
+        " cd {input.workdir}; "
+        " CLUMPP {input.config} > {log.std} 2>&1"

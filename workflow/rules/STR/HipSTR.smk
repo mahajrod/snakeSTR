@@ -1,7 +1,7 @@
 import pandas
 import pandas as pd
 
-localrules: extract_loci_sets
+localrules: extract_loci_sets, extract_loci_sets
 
 rule hipSTR:
     priority: 1000
