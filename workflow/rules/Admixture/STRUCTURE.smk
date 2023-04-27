@@ -204,12 +204,14 @@ rule clumpp:
         loci_tab=out_dir_path / "str/hipSTR.allels.{stage}.{loci_subset}.loci.postprocessed.tab",
         clumpp_input=out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.clumpp.input",
         config=out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.clumpp.config",
-        workdir=out_dir_path / "admixture/structure/{stage}/{loci_subset}/",
+        #workdir=out_dir_path / "admixture/structure/{stage}/{loci_subset}/",
     output:
         out=out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.clumpp.output",
         permutted=expand(out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.clumpp.permutted.R_{run}",
                          run=structure_run_id_list,
                          allow_missing=True)
+    params:
+        workdir= lambda wildcards: out_dir_path / "admixture/structure/{0}/{1}/".format(wildcards.stage,wildcards.loci_subset),
     log:
         std=output_dict["log"] / "clumpp.{stage}.{loci_subset}.{K}.log",
         cluster_log=output_dict["cluster_log"] / "clumpp.cluster.{stage}.{loci_subset}.{K}.log",
@@ -225,5 +227,5 @@ rule clumpp:
     threads:
         parameters["threads"]["clumpp"]
     shell:
-        " cd {input.workdir}; "
+        " cd {params.workdir}; "
         " CLUMPP {input.config} > {log.std} 2>&1"
