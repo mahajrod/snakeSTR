@@ -138,7 +138,6 @@ rule prepare_clumpp_input:
          " awk 'FNR==1 {{print \"\"}} {{print}}' {input} | tail -n +2 > {output.res} 2>{log.std}"
 
 
-
 rule generate_config_for_clumpp:
     priority: 1000
     input:
@@ -214,6 +213,7 @@ rule clumpp:
         abs_log_path=lambda wildcards: (output_dict["log"] / "clumpp.{0}.{1}.{2}.log".format(wildcards.stage,
                                                                                             wildcards.loci_subset, wildcards.K)).absolute(),
         workdir= lambda wildcards: out_dir_path / "admixture/structure/{0}/{1}/".format(wildcards.stage,wildcards.loci_subset),
+        local_config_path=lambda wildcards: "structure.{0}.K{1}.clumpp.config".format(wildcards.loci_subset, wildcards.K)
     log:
         std=output_dict["log"] / "clumpp.{stage}.{loci_subset}.{K}.log",
         cluster_log=output_dict["cluster_log"] / "clumpp.cluster.{stage}.{loci_subset}.{K}.log",
@@ -230,4 +230,4 @@ rule clumpp:
         parameters["threads"]["clumpp"]
     shell:
         " cd {params.workdir}; "
-        " CLUMPP {input.config} > {params.abs_log_path} 2>&1"
+        " CLUMPP {params.local_config_path} > {params.abs_log_path} 2>&1"
