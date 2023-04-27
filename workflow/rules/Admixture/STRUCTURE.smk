@@ -209,8 +209,10 @@ rule clumpp:
         out=out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.clumpp.output",
         permutted=expand(out_dir_path / "admixture/structure/{stage}/{loci_subset}/structure.{loci_subset}.K{K}.clumpp.permutted.R_{run}",
                          run=structure_run_id_list,
-                         allow_missing=True)
+                         allow_missing=True),
     params:
+        abs_log_path=lambda wildcards: (output_dict["log"] / "clumpp.{0}.{1}.{2}.log".format(wildcards.stage,
+                                                                                            wildcards.loci_subset, wildcards.K)).absolute(),
         workdir= lambda wildcards: out_dir_path / "admixture/structure/{0}/{1}/".format(wildcards.stage,wildcards.loci_subset),
     log:
         std=output_dict["log"] / "clumpp.{stage}.{loci_subset}.{K}.log",
@@ -228,4 +230,4 @@ rule clumpp:
         parameters["threads"]["clumpp"]
     shell:
         " cd {params.workdir}; "
-        " CLUMPP {input.config} > {log.std} 2>&1"
+        " CLUMPP {input.config} > {params.abs_log_path} 2>&1"
