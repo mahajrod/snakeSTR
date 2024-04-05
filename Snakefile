@@ -142,7 +142,7 @@ localrules: all
 structure_run_id_list = range(1, parameters["tool_options"]["structure"]["number_of_runs"] + 1)
 loci_set_list = list(loci_set_dict.keys())
 
-results_list = [out_dir_path / "str/hipSTR.filtered.vcf",
+results_list = [out_dir_path / "str/hipSTR.filtered.vcf.gz",
                 #expand(out_dir_path / "admixture/structure/{stage}/structure.K{K}.R{run}_f",
                 #      stage=["raw", "filtered"],
                 #      K=parameters["tool_options"]["structure"]["K_list"],
