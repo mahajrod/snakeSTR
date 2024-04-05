@@ -99,6 +99,7 @@
 
         "tool_options":
             "hipSTR":
+                "tool_path":              ""
                 "min_reads":                5
                 "min_call_qual":            0.9
                 "max_call_flank_indel":     0.15

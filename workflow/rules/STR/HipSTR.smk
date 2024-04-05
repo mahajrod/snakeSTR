@@ -17,6 +17,7 @@ rule hipSTR:
         bams=lambda wildcards: ",".join(expand(out_dir_path / "realigned_bam/{sample_id}/{sample_id}.realigned.bam",
                                                sample_id=sample_id_list)),
         min_reads=parameters["tool_options"]["hipSTR"]["min_reads"],
+        tool_path=parameters["tool_options"]["hipSTR"]["tool_path"],
     log:
         std=output_dict["log"] / "hipSTR.log",
         err=output_dict["log"] / "hipSTR.err",
@@ -33,7 +34,7 @@ rule hipSTR:
     threads:
         parameters["threads"]["hipSTR"]
     shell:
-         " HipSTR --bams {params.bams} --fasta {input.reference} --regions {input.regions} "
+         " {params.tool_path}/HipSTR --bams {params.bams} --fasta {input.reference} --regions {input.regions} "
          " --min-reads {params.min_reads} --str-vcf {output.vcf} --log {log.std} --viz-out {output.viz} 2>{log.err}"
 
 rule filter_hipSTR:
@@ -48,6 +49,7 @@ rule filter_hipSTR:
         max_call_stutter=parameters["tool_options"]["hipSTR"]["max_call_stutter"],
         min_call_allele_bias=parameters["tool_options"]["hipSTR"]["min_call_allele_bias"],
         min_call_strand_bias=parameters["tool_options"]["hipSTR"]["min_call_strand_bias"],
+        tool_path=parameters["tool_options"]["hipSTR"]["tool_path"],
     log:
         std=output_dict["log"] / "filter_hipSTR.log",
         cluster_log=output_dict["cluster_log"] / "filter_hipSTR.cluster.log",
@@ -63,7 +65,7 @@ rule filter_hipSTR:
     threads:
         parameters["threads"]["filter_hipSTR"]
     shell:
-         " filter_vcf.py  --vcf {input.vcf} "
+         " python3 {params.tool_path}/scripts/filter_vcf.py  --vcf {input.vcf} "
          " --min-call-qual {params.min_call_qual} "
          " --max-call-flank-indel {params.max_call_flank_indel} "
          " --max-call-stutter {params.max_call_stutter}  "
@@ -116,7 +118,7 @@ rule convert_hipSTR_vcf:
     shell:
          " convert_STR_vcf_to_allel_length.py {params.add_population_column} {params.pop_file} --encode_ids "
          " --pop_df_file {output.pop_tab} "
-         " -i {input.vcf} {params.len_file} 2>{log.loci} > {output.loci_tab};" # {params.postprocessing} 
+         " -i {input.vcf} {params.len_file} 2>{log.loci} > {output.loci_tab};" # {params.postprocessing}
          " convert_STR_vcf_to_allel_length.py {params.add_population_column} {params.pop_file} --encode_ids "
          " -i {input.vcf}  2>{log.str}  > {output.str_tab};" #{params.postprocessing}
 
