@@ -7,4 +7,4 @@
   - "anaconda"
 "dependencies":
   - "python>=2.7"
-  - "gatk3"
+  - "gatk=3.7" # requires additional installation via 'gatk-register'
