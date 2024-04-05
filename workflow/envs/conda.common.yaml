@@ -4,6 +4,7 @@
   - "bioconda"
   - "conda-forge"
   - "anaconda"
+  - "mahajrod"
 "dependencies":
   - "pyvcf"
   - "samtools"
