@@ -220,8 +220,8 @@ rule clumpp:
         cluster_err=output_dict["cluster_error"] / "clumpp.cluster.{stage}.{loci_subset}.{K}.err",
     benchmark:
         output_dict["benchmark"] / "clumpp.benchmark.{stage}.{loci_subset}.{K}.txt"
-    #conda:
-    #    config["conda"]["common"]["name"] if config["use_existing_envs"] else ("../../../%s" % config["conda"]["common"]["yaml"])
+    conda:
+        config["conda"]["common"]["name"] if config["use_existing_envs"] else ("../../../%s" % config["conda"]["common"]["yaml"])
     resources:
         cpus=parameters["threads"]["clumpp"],
         time=parameters["time"]["clumpp"],
