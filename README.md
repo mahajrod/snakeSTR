@@ -12,7 +12,7 @@ In the initial stage, for each sample and STR loci, reads aligned to the loci, i
 
 ## VI - VII. STR-typing
 
-STR-typing is conducted using hipSTR. The workflow includes analysis of both raw and filtered STR-loci sets. For the raw STR-loci sets, typing is conducted with a set minimum read depth. For the filtered STR-loci sets, additional criteria are applied including minimum read depth, call quality thresholds, and maximum allowable fractions of reads with specific artifacts, alongside biases in allele and strand calls. The workflow is expanded to compare the effects of filtration on the outcome.
+STR-typing is conducted using hipSTR. The workflow includes analysis of both raw and filtered (VI a) STR-loci sets. For the raw STR-loci sets, typing is conducted with a set minimum read depth. For the filtered STR-loci sets, additional criteria are applied including minimum read depth, call quality thresholds, and maximum allowable fractions of reads with specific artifacts, alongside biases in allele and strand calls. The workflow is expanded to compare the effects of filtration on the outcome.
 
 ## VIII - XIV. Admixture analysis
 
