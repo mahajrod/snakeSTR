@@ -8,7 +8,7 @@
 "dependencies":
   - "routoolpa"
   - "mavr"
-  - "mace"
+  - "mace<1.1.38"
   - "pyvcf"
   - "samtools"
   - "bwa"
